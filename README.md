@@ -22,6 +22,9 @@ Wins: -# of wins here-
 Losses: -# of losses here-
 ```
 
+## Usage
+Enter API_Key and client settings at the bottom of lolbot.py
+
 ## Goals
 -Learn more Python to do more cooler things
 
