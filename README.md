@@ -2,11 +2,11 @@
 A WIP Discord Bot for League of Legends created using Python 3.5 along with the API Wrapper written by Rapptz.
 
 ## Requirements
-Python 3.5+
+* Python 3.5+
 
-discord.py from https://github.com/Rapptz/discord.py
+* discord.py from https://github.com/Rapptz/discord.py
 
-```requests``` library
+* ```requests``` library
 
 ## Features
 As of right now, this bot only has the ability to return the ranked stats of a given player using $rank.
@@ -23,7 +23,11 @@ Losses: -# of losses here-
 ```
 
 ## Usage
-Enter API_Key and client settings at the bottom of lolbot.py
+If you wish to use a separate account to run the bot, then you can just fill in the email, password, LoL API Key, and
+region inside. You must also enable the client to use the email and password in lolbot.py and disable it from using
+the token. (By default, the bot will use the token. I'll probably make this more user-friendly in the near future.)
+
+If not, then you can just enter the Token, LoL API Key, and region inside config.py.
 
 ## Goals
 -Learn more Python to do more cooler things
