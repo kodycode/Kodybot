@@ -3,44 +3,8 @@
 import requests
 import discord
 import logger
+from lolrank import LOLRank
 client = discord.Client()
-
-async def get_Summoner_ID(region, summoner_name, API_key):
-    URL = 'https://' + region + '.api.pvp.net/api/lol/' + region + '/v1.4/summoner/by-name/' + summoner_name + '?api_key=' + API_key
-    response = requests.get(URL)
-    print(URL)
-    return response.json()
-
-async def request_Ranked_Data(region, ID, API_key):
-
-    URL = 'https://' + region + '.api.pvp.net/api/lol/' + region + '/v2.5/league/by-summoner/' + ID + '/entry?api_key=' + API_key
-    response = requests.get(URL)
-    print(URL)
-    return response.json()
-
-async def print_ranked_data(message, summoner_name):
-    summoner = summoner_name.replace(' ', '')
-    summoner = summoner.lower()
-    
-    region = 'na'       #Change to any other region if so desired
-    
-    API_key = 'Enter LoL API Key Here';
-    #If you don't have one you can get one at https://developer.riotgames.com
-
-    responseJSON = await get_Summoner_ID(region, summoner, API_key)
-
-    ID = responseJSON[summoner]['id']
-    ID = str(ID)          
-    responseJSON2 = await request_Ranked_Data(region, ID, API_key)
-
-    tier = responseJSON2[ID][0]['tier']
-    division = responseJSON2[ID][0]['entries'][0]['division']
-    lp = str(responseJSON2[ID][0]['entries'][0]['leaguePoints'])
-    wins = str(responseJSON2[ID][0]['entries'][0]['wins'])
-    losses = str(responseJSON2[ID][0]['entries'][0]['losses'])
-                       
-    await client.send_message(message.channel, summoner_name + '\n-------------\nTier: ' + tier + '\nDivison: '
-                                + division + '\nLP: ' + lp + '\nWins: ' + wins + '\nLosses: ' + losses + '\n\n')
 
 @client.async_event
 async def on_message(message):
@@ -52,7 +16,12 @@ async def on_message(message):
         summoner_name = message.content[6:]
         
         try:
-            await print_ranked_data(message, summoner_name)
+            rank = LOLRank(summoner_name)
+            await rank.get_ranked_data()
+
+            await client.send_message(message.channel, rank.summoner + '\n-------------\nTier: ' + rank.tier + '\nDivison: '
+                                    + rank.division + '\nLP: ' + rank.lp + '\nWins: ' + rank.wins + '\nLosses: ' + rank.losses + '\n\n')
+            
         except KeyError:
             await client.send_message(message.channel, 'ERROR! No ranked stats found for this player')
             
