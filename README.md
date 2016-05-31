@@ -29,6 +29,8 @@ the token. (By default, the bot will use the token. I'll probably make this more
 
 If not, then you can just enter the Token, LoL API Key, and region inside config.py.
 
+Once you're done either of the above, then you can just run the .bat file and it should be good to go.
+
 ## Goals
 -Learn more Python to do more cooler things
 
