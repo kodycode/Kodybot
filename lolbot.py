@@ -3,6 +3,7 @@
 import requests
 import discord
 import logger
+import config
 from lolrank import LOLRank
 client = discord.Client()
 
@@ -25,5 +26,6 @@ async def on_message(message):
         except KeyError:
             await client.send_message(message.channel, 'ERROR! No ranked stats found for this player')
             
-client.run('Enter discord token/account information here')
-client.connect()
+#if you want to use email and password, enable below and disable client.run(config.token)
+#client.run(config.email, config.password)
+client.run(config.token)
