@@ -32,13 +32,13 @@ If not, then you can just enter the Token, LoL API Key, and region inside config
 Once you're done either of the above, then you can just run the .bat file and it should be good to go.
 
 ## Goals
--Learn more Python to do more cooler things
+- Learn more Python to do more cooler things
 
--Improve coding structure
+- Improve coding structure
 
--Implement LoL Fantasy commands that returns certain stats, teams w/l ratio, etc.
+- Implement LoL Fantasy commands that returns certain stats, teams w/l ratio, etc.
 
--More to come in the future..
+- More to come in the future..
 
-## Special Thanks
-FarzaTV
+## Credits
+FarzaTV (for using his code to create lolrank.py)
