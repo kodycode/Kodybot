@@ -4,7 +4,7 @@ import requests
 import discord
 import logger
 import config
-from lolrank import LOLRank
+from modules.lolrank import LOLRank
 client = discord.Client()
 
 @client.async_event
