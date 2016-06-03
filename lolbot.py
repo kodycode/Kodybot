@@ -8,11 +8,13 @@ from modules.lolrank import LOLRank
 client = discord.Client()
 
 @client.async_event
+async def on_ready():
+    print('Logging in..')
+    print('Successfully logged in!')
+
+@client.async_event
 async def on_message(message):
     #author = message.author
-    if message.content.startswith('$exit'):
-        client.logout()
-        print('Bot has logged out')
     if message.content.startswith('$rank'):
         summoner_name = message.content[6:]
         
@@ -20,6 +22,7 @@ async def on_message(message):
             rank = LOLRank(summoner_name)
             await rank.get_ranked_data()
 
+            rank.summoner = summoner_name
             await client.send_message(message.channel, rank.summoner + '\n-------------\nTier: ' + rank.tier + '\nDivison: '
                                     + rank.division + '\nLP: ' + rank.lp + '\nWins: ' + rank.wins + '\nLosses: ' + rank.losses + '\n\n')
             

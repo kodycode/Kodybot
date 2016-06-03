@@ -18,14 +18,14 @@ class LOLRank:
     async def get_summoner_ID(self, region, summoner_name, lol_api_key):
         URL = 'https://' + region + '.api.pvp.net/api/lol/' + region + '/v1.4/summoner/by-name/' + summoner_name + '?api_key=' + lol_api_key
         response = requests.get(URL)
-        print(URL)
+        
         return response.json()
 
     async def request_ranked_Data(self, region, ID, lol_api_key):
 
         URL = 'https://' + region + '.api.pvp.net/api/lol/' + region + '/v2.5/league/by-summoner/' + ID + '/entry?api_key=' + lol_api_key
         response = requests.get(URL)
-        print(URL)
+        
         return response.json()
 
     async def get_ranked_data(self):
