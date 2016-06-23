@@ -17,7 +17,7 @@ async def on_ready():
 async def on_message(message):
     #author = message.author
     if message.content.startswith('$avatar'):
-        summoner_name = message.content[8:]
+        summoner_name = message.content[8:].replace(' ', '%20')
 
         avatar = misc(summoner_name)
         await avatar.get_avatar()
