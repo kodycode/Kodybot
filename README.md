@@ -35,8 +35,6 @@ If you wish to use oauth2, then you can just enter the Token, LoL API Key, and r
 When using the lolfantasy module, you need to download PhantomJS, extract the zip, get the path to phantomjs.exe
 and place it inside the directory variable in config.py.
 
-Once you're done either of the above, then you can just run the .bat file and it should be good to go.
-
 ## Goals
 - Learn more Python to do more cooler things
 
