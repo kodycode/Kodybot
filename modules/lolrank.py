@@ -39,5 +39,10 @@ class LOLRank:
         self.division = responseJSON2[ID][0]['entries'][0]['division']
         self.lp = str(responseJSON2[ID][0]['entries'][0]['leaguePoints'])
         self.wins = str(responseJSON2[ID][0]['entries'][0]['wins'])
-        self.losses = str(responseJSON2[ID][0]['entries'][0]['losses'])                           
+        self.losses = str(responseJSON2[ID][0]['entries'][0]['losses'])
+
+    async def display_ranked_data(self, client, channel):
+        await client.send_message(channel, self.summoner + '\n-------------\nTier: ' + self.tier + '\nDivison: '+ self.division
+                                  + '\nLP: ' + self.lp + '\nWins: ' + self.wins + '\nLosses: ' + self.losses + '\n\n')
+        
        

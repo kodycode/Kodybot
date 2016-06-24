@@ -5,8 +5,8 @@ import discord
 import logger
 import config
 from modules.lolrank import LOLRank
-from modules.lolmisc import misc
 from modules.lolfantasy import LOLFantasy
+from modules.lolmisc import Misc
 client = discord.Client()
 
 @client.async_event
@@ -20,9 +20,9 @@ async def on_message(message):
     if message.content.startswith('$avatar'):
         summoner_name = message.content[8:].replace(' ', '%20')
 
-        avatar = misc(summoner_name)
+        avatar = Misc(summoner_name)
         await avatar.get_avatar()
-        await client.send_message(message.channel, avatar.avatar)
+        await avatar.display_avatar(client, message.channel)
         
     if message.content.startswith('$rank'):
         summoner_name = message.content[6:]
@@ -30,10 +30,9 @@ async def on_message(message):
         try:
             rank = LOLRank(summoner_name)
             await rank.get_ranked_data()
-
             rank.summoner = summoner_name
-            await client.send_message(message.channel, rank.summoner + '\n-------------\nTier: ' + rank.tier + '\nDivison: '
-                                    + rank.division + '\nLP: ' + rank.lp + '\nWins: ' + rank.wins + '\nLosses: ' + rank.losses + '\n\n')
+            
+            await rank.display_ranked_data(client, message.channel)
         except KeyError:
             await client.send_message(message.channel, 'ERROR! No ranked stats found for this player')
             
@@ -42,22 +41,14 @@ async def on_message(message):
         
         team = LOLFantasy(fantasyID)
         await team.get_team_names()
+        await team.display_team_names(client, message.channel)
         
-        if not team.team_names:
-            await client.send_message(message.channel, 'No teams found for Fantasy ID: ' + fantasyID)
-        else:
-            await client.send_message(message.channel, 'For Fantasy ID: ' + fantasyID + '\n' + '\n'.join(map(str,team.team_names)))
-
     if message.content.startswith('$fantasy summoners'):
         fantasyID = message.content[19:]
 
         summoner = LOLFantasy(fantasyID)
         await summoner.get_summoner_names()
-        
-        if not summoner.summoner_names:
-            await client.send_message(message.channel, 'No players found for Fantasy ID: ' + fantasyID)
-        else:
-            await client.send_message(message.channel, 'For Fantasy ID: ' + fantasyID + '\n' + '\n'.join(map(str,summoner.summoner_names)))
+        await summoner.display_summoner_names(client, message.channel)    
             
 #if you want to use email and password, enable below and disable client.run(config.token)
 #client.run(config.email, config.password)

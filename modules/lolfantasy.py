@@ -11,6 +11,7 @@ options.append('--load-images=false')
 class LOLFantasy:
 
     def __init__(self, fantasyID):
+        self.fantasyID = fantasyID
         self.driver = webdriver.PhantomJS(executable_path=config.directory, service_args=options)
         self.driver.get('http://fantasy.na.lolesports.com/en-US/league/' + fantasyID)
         self.html_source = self.driver.page_source
@@ -35,4 +36,14 @@ class LOLFantasy:
 
         self.driver.quit()
 
-    
+    async def display_team_names(self, client, channel):
+        if not self.team_names:
+            await client.send_message(channel, 'No teams found for Fantasy ID: ' + self.fantasyID)
+        else:
+            await client.send_message(channel, 'For Fantasy ID: ' + self.fantasyID + '\n' + '\n'.join(map(str,self.team_names)))
+
+    async def display_summoner_names(self, client, channel):
+        if not self.summoner_names:
+            await client.send_message(channel, 'No players found for Fantasy ID: ' + self.fantasyID)
+        else:
+            await client.send_message(channel, 'For Fantasy ID: ' + self.fantasyID + '\n' + '\n'.join(map(str,self.summoner_names)))
