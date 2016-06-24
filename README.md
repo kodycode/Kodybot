@@ -15,6 +15,8 @@ A WIP Discord Bot for League of Legends created using Python 3.5 along with the 
 * PhantomJS
 
 ## Commands
+```You can get the fantasy league ID here when you go to your fantasy league page. When you look at the URL, there will be numbers displayed at the end (i.e http://fantasy.na.lolesports.com/en-US/league/[ID found here])```
+
 | Commands      | Output        |
 | ------------- |:-------------:|
 | $avatar [enter summoner name here]      | displays summoner icon used in league of legends |
