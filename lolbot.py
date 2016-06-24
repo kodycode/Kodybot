@@ -6,6 +6,7 @@ import logger
 import config
 from modules.lolrank import LOLRank
 from modules.lolmisc import misc
+from modules.lolfantasy import LOLFantasy
 client = discord.Client()
 
 @client.async_event
@@ -15,7 +16,7 @@ async def on_ready():
 
 @client.async_event
 async def on_message(message):
-    #author = message.author
+
     if message.content.startswith('$avatar'):
         summoner_name = message.content[8:].replace(' ', '%20')
 
@@ -35,6 +36,28 @@ async def on_message(message):
                                     + rank.division + '\nLP: ' + rank.lp + '\nWins: ' + rank.wins + '\nLosses: ' + rank.losses + '\n\n')
         except KeyError:
             await client.send_message(message.channel, 'ERROR! No ranked stats found for this player')
+            
+    if message.content.startswith('$fantasy teams'):
+        fantasyID = message.content[15:]
+        
+        team = LOLFantasy(fantasyID)
+        await team.get_team_names()
+        
+        if not team.team_names:
+            await client.send_message(message.channel, 'No teams found for Fantasy ID: ' + fantasyID)
+        else:
+            await client.send_message(message.channel, 'For Fantasy ID: ' + fantasyID + '\n' + '\n'.join(map(str,team.team_names)))
+
+    if message.content.startswith('$fantasy summoners'):
+        fantasyID = message.content[19:]
+
+        summoner = LOLFantasy(fantasyID)
+        await summoner.get_summoner_names()
+        
+        if not summoner.summoner_names:
+            await client.send_message(message.channel, 'No players found for Fantasy ID: ' + fantasyID)
+        else:
+            await client.send_message(message.channel, 'For Fantasy ID: ' + fantasyID + '\n' + '\n'.join(map(str,summoner.summoner_names)))
             
 #if you want to use email and password, enable below and disable client.run(config.token)
 #client.run(config.email, config.password)

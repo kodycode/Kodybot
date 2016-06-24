@@ -5,3 +5,6 @@ password = 'Enter password here'
 token = 'Enter token here'
 lol_api_key = 'Enter league of legends api key here'
 region = 'Enter a region here (na, br, kr, etc.)'
+
+#phantomjs directory (i.e. 'D:\\phantomjs-2.x.x\\bin\\phantomjs.exe')
+directory = 'Enter phantomjs directory here'
