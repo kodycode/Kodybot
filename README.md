@@ -5,29 +5,33 @@ A WIP Discord Bot for League of Legends created using Python 3.5 along with the 
 * Python 3.5+
 
 * discord.py from https://github.com/Rapptz/discord.py
+ 
+* ```requests``` package
+ 
+* ```selenium``` package
+ 
+* ```beautifulsoup4``` package
+ 
+* PhantomJS
 
-* ```requests``` library
+## Commands
+| Commands      | Output        |
+| ------------- |:-------------:|
+| $avatar [enter summoner name here]      | displays summoner icon used in league of legends |
+| $rank [enter summoner here]      | displays rank, tier, division, wins/losses of player      |
+| $fantasy teams [enter fantasy league ID here] | displays teams that exist in fantasy league      |
+| $fantasy summoners [enter fantasy league ID here] | displays players that exist in fantasy league |
 
-## Features
-As of right now, this bot only has the ability to return the ranked stats of a given player using $rank.
 
-For example, if you type "$rank -summoner name here-" into the discord chat the results:
-```
--Summoner Name Here-
---------------------
-Tier: -tier here-
-Division: -division here-
-LP: -# of LP here-
-Wins: -# of wins here-
-Losses: -# of losses here-
-```
-
-## Usage
+## Setting up
 If you wish to use a separate account to run the bot, then you can just fill in the email, password, LoL API Key, and
-region inside. You must also enable the client to use the email and password in lolbot.py and disable it from using
+region inside config.py. You must also enable the client to use the email and password in lolbot.py and disable it from using
 the token. (By default, the bot will use the token. I'll probably make this more user-friendly in the near future.)
 
-If not, then you can just enter the Token, LoL API Key, and region inside config.py.
+If you wish to use oauth2, then you can just enter the Token, LoL API Key, and region inside config.py.
+
+When using the lolfantasy module, you need to download PhantomJS, extract the zip, get the path to phantomjs.exe
+and place it inside the directory variable in config.py.
 
 Once you're done either of the above, then you can just run the .bat file and it should be good to go.
 
