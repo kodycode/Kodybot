@@ -17,6 +17,17 @@ async def on_ready():
 @client.async_event
 async def on_message(message):
 
+    if message.content.startswith('$help'):
+        await client.send_message(message.channel,'Current commands are:\n' +
+                                  '```$avatar [enter summoner name here] - ' +
+                                  'displays summoner icon used in league of legends\n' +
+                                  '$rank [enter summoner here] - ' +
+                                  'displays rank, tier, division, wins/losses of player\n' +
+                                  '$fantasy teams [enter fantasy league ID here] - ' +
+                                  'displays teams that exist in fantasy league\n' +
+                                  '$fantasy summoners [enter fantasy league ID here] - ' +
+                                  'displays players that exist in fantasy league```')
+
     if message.content.startswith('$avatar'):
         summoner_name = message.content[8:].replace(' ', '%20')
 
