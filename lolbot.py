@@ -26,7 +26,9 @@ async def on_message(message):
                                   '$fantasy teams [enter fantasy league ID here] - ' +
                                   'displays teams that exist in fantasy league\n' +
                                   '$fantasy summoners [enter fantasy league ID here] - ' +
-                                  'displays players that exist in fantasy league```')
+                                  'displays players that exist in fantasy league```' +
+                                  '$fantasy league [enter fantasy league ID here] - ' +
+                                  'displays teams, names, and total points')
 
     if message.content.startswith('$avatar'):
         summoner_name = message.content[8:].replace(' ', '%20')
@@ -59,7 +61,15 @@ async def on_message(message):
 
         summoner = LOLFantasy(fantasyID)
         await summoner.get_summoner_names()
-        await summoner.display_summoner_names(client, message.channel)    
+        await summoner.display_summoner_names(client, message.channel)
+
+    if message.content.startswith('$fantasy league'):
+        fantasyID = message.content[15:].replace(' ', '')
+
+        table = LOLFantasy(fantasyID)
+        await table.get_summoner_names()
+        await table.get_team_names()
+        await table.display_league(client, message.channel)
             
 #if you want to use email and password, enable below and disable client.run(config.token)
 #client.run(config.email, config.password)

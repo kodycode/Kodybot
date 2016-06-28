@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from tabulate import tabulate
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -27,6 +28,12 @@ class LOLFantasy:
                 
         self.driver.quit()
 
+    async def display_team_names(self, client, channel):
+        if not self.team_names:
+            await client.send_message(channel, 'No teams found for Fantasy ID: ' + self.fantasyID)
+        else:
+            await client.send_message(channel, 'For Fantasy ID: ' + self.fantasyID + '\n' + '\n'.join(map(str,self.team_names)))
+
     async def get_summoner_names(self):
         soup = BeautifulSoup(self.html_source, 'html.parser')
 
@@ -36,14 +43,22 @@ class LOLFantasy:
 
         self.driver.quit()
 
-    async def display_team_names(self, client, channel):
-        if not self.team_names:
-            await client.send_message(channel, 'No teams found for Fantasy ID: ' + self.fantasyID)
-        else:
-            await client.send_message(channel, 'For Fantasy ID: ' + self.fantasyID + '\n' + '\n'.join(map(str,self.team_names)))
-
     async def display_summoner_names(self, client, channel):
         if not self.summoner_names:
             await client.send_message(channel, 'No players found for Fantasy ID: ' + self.fantasyID)
         else:
             await client.send_message(channel, 'For Fantasy ID: ' + self.fantasyID + '\n' + '\n'.join(map(str,self.summoner_names)))
+
+    async def display_league(self, client, channel):
+        if not (self.team_names):
+            await client.send_message(channel, 'No teams found for Fantasy ID: ' + self.fantasyID)
+        elif not (self.summoner_names):
+            await client.send_message(channel, 'No summoners found for Fantasy ID: ' + self.fantasyID)
+        else:
+            display = []
+            await client.send_message(channel, 'Summoners \t\tTeams')
+            for (s,t) in zip(self.summoner_names, self.team_names):
+                display.append(s.ljust(20,'-') + t + '\n')
+                #await client.send_message(channel, s.ljust(20,'-') + t)
+
+            await client.send_message(channel, '\n'.join(map(str,display)))        
