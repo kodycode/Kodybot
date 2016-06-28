@@ -21,6 +21,7 @@ A WIP Discord Bot for League of Legends created using Python 3.5 along with the 
 | ------------- |:-------------:|
 | $avatar [enter summoner name here]      | displays summoner icon used in league of legends |
 | $rank [enter summoner here]      | displays rank, tier, division, wins/losses of player      |
+| $fantasy league [enter fantasy league ID here] | displays rankings, players, teams, wins-ties-loss, total points|
 | $fantasy teams [enter fantasy league ID here] | displays teams that exist in fantasy league      |
 | $fantasy summoners [enter fantasy league ID here] | displays players that exist in fantasy league |
 
