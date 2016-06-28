@@ -28,7 +28,7 @@ async def on_message(message):
                                   '$fantasy summoners [enter fantasy league ID here] - ' +
                                   'displays players that exist in fantasy league```' +
                                   '$fantasy league [enter fantasy league ID here] - ' +
-                                  'displays teams, names, and total points')
+                                  'displays rankings, players, teams, wins-ties-loss, total points'
 
     if message.content.startswith('$avatar'):
         summoner_name = message.content[8:].replace(' ', '%20')
