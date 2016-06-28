@@ -50,14 +50,14 @@ async def on_message(message):
             await client.send_message(message.channel, 'ERROR! No ranked stats found for this player')
             
     if message.content.startswith('$fantasy teams'):
-        fantasyID = message.content[15:]
+        fantasyID = message.content[15:].replace (' ', '')
         
         team = LOLFantasy(fantasyID)
         await team.get_team_names()
         await team.display_team_names(client, message.channel)
         
     if message.content.startswith('$fantasy summoners'):
-        fantasyID = message.content[19:]
+        fantasyID = message.content[19:].replace(' ', '')
 
         summoner = LOLFantasy(fantasyID)
         await summoner.get_summoner_names()
@@ -69,7 +69,12 @@ async def on_message(message):
         table = LOLFantasy(fantasyID)
         await table.get_summoner_names()
         await table.get_team_names()
+        await table.get_total_points()
+        await table.get_wins()
+        await table.get_ties()
+        await table.get_losses()
         await table.display_league(client, message.channel)
+        
             
 #if you want to use email and password, enable below and disable client.run(config.token)
 #client.run(config.email, config.password)
