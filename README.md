@@ -1,4 +1,4 @@
-# LoLDiscordBot
+# Kodybot
 A WIP Discord Bot for League of Legends created using Python 3.5 along with the API Wrapper written by Rapptz.
 
 ## Requirements
@@ -25,6 +25,7 @@ A WIP Discord Bot for League of Legends created using Python 3.5 along with the 
 | $fantasy league [enter fantasy league ID here] | displays rankings, players, teams, wins-ties-loss, total points|
 | $fantasy teams [enter fantasy league ID here] | displays teams that exist in fantasy league      |
 | $fantasy summoners [enter fantasy league ID here] | displays players that exist in fantasy league |
+| $ow level [enter battle tag here] | displays overwatch level of player |
 
 
 ## Setting up
