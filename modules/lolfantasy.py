@@ -1,5 +1,7 @@
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -21,8 +23,10 @@ class LOLFantasy:
         self.wins = []
         self.ties = []
         self.losses = []
+
+        wait = WebDriverWait(self.driver, 10)
+        element = wait.until(EC.presence_of_all_elements_located)
         self.driver.quit()
-        
 
     async def get_team_names(self):
         soup = BeautifulSoup(self.html_source, 'html.parser')
