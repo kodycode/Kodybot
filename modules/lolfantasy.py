@@ -16,6 +16,11 @@ class LOLFantasy:
         self.fantasyID = fantasyID
         self.driver = webdriver.PhantomJS(executable_path=config.directory, service_args=options)
         self.driver.get('http://fantasy.na.lolesports.com/en-US/league/' + fantasyID)
+        
+        wait = WebDriverWait(self.driver, 10)
+        element = wait.until(EC.presence_of_all_elements_located)
+        self.driver.quit()
+        
         self.html_source = self.driver.page_source
         self.team_names = []
         self.summoner_names = []
@@ -23,15 +28,12 @@ class LOLFantasy:
         self.wins = []
         self.ties = []
         self.losses = []
+        self.soup = BeautifulSoup(self.html_source, 'html.parser')
 
-        wait = WebDriverWait(self.driver, 10)
-        element = wait.until(EC.presence_of_all_elements_located)
-        self.driver.quit()
+        
 
     async def get_team_names(self):
-        soup = BeautifulSoup(self.html_source, 'html.parser')
-        
-        for head in soup.find_all('div', {'class': 'homepage-middle-right'}):
+        for head in self.soup.find_all('div', {'class': 'homepage-middle-right'}):
             for team in head.find_all('div', {'class': 'team-name'}):
                 self.team_names.append(team.text)
 
@@ -42,9 +44,7 @@ class LOLFantasy:
             await client.send_message(channel, 'For Fantasy ID: ' + self.fantasyID + '\n' + '\n'.join(map(str,self.team_names)))
 
     async def get_summoner_names(self):
-        soup = BeautifulSoup(self.html_source, 'html.parser')
-
-        for head in soup.find_all('div', {'class': 'standings-list'}):
+        for head in self.soup.find_all('div', {'class': 'standings-list'}):
             for summoner in head.find_all('div', {'class': 'summoner-name'}):
                 self.summoner_names.append(summoner.text)
 
@@ -55,31 +55,24 @@ class LOLFantasy:
             await client.send_message(channel, 'For Fantasy ID: ' + self.fantasyID + '\n' + '\n'.join(map(str,self.summoner_names)))
 
     async def get_wins(self):
-        soup = BeautifulSoup(self.html_source, 'html.parser')
-
-        for head in soup.find_all('div', {'class': 'wins'}):
+        for head in self.soup.find_all('div', {'class': 'wins'}):
             for wins in head.find('div', {'class': 'value'}):
                 self.wins.append(wins)
 
     async def get_ties(self):
-        soup = BeautifulSoup(self.html_source, 'html.parser')
-
-        for head in soup.find_all('div', {'class': 'ties'}):
+        for head in self.soup.find_all('div', {'class': 'ties'}):
             for ties in head.find('div', {'class': 'value'}):
                 self.ties.append(ties)
 
     async def get_losses(self):
-        soup = BeautifulSoup(self.html_source, 'html.parser')
-
-        for head in soup.find_all('div', {'class': 'losses'}):
+        for head in self.soup.find_all('div', {'class': 'losses'}):
             for losses in head.find('div', {'class': 'value'}):
                 self.losses.append(losses)
 
     async def get_total_points(self):
-        soup = BeautifulSoup(self.html_source, 'html.parser')
         whole_numbers = []
         fraction_numbers = []
-        for head in soup.find_all('div', {'class': 'total-points'}):
+        for head in self.soup.find_all('div', {'class': 'total-points'}):
             num = ''
             for whole in head.find('span', {'class': 'whole-part'}):
                 whole_numbers.append(whole)
