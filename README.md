@@ -20,9 +20,10 @@ A WIP Discord Bot using Python 3.5 along with the API Wrapper written by Rapptz.
 * PhantomJS
 
 ## Commands
-```You can get the fantasy league ID here when you go to your fantasy league page. When you look at the URL, there will be numbers displayed at the end (i.e http://fantasy.na.lolesports.com/en-US/league/[ID found here])```
+
 
 ####League of Legends:
+```You can get the fantasy league ID here when you go to your fantasy league page. When you look at the URL, there will be numbers displayed at the end (i.e http://fantasy.na.lolesports.com/en-US/league/[ID found here])```
 
 | Commands      | Output        |
 | ------------- |:-------------:|
@@ -34,6 +35,7 @@ A WIP Discord Bot using Python 3.5 along with the API Wrapper written by Rapptz.
 | $fantasy summoners [enter fantasy league ID here] | displays players that exist in fantasy league |
 
 ####Overwatch:
+```Currently obtains PC player data only```
 
 | Commands      | Output        |
 | ------------- |:-------------:|
