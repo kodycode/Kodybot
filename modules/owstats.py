@@ -7,7 +7,7 @@ class OWStats:
         self.battle_tag = battle_tag
         self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + battle_tag
         self.html_source = urllib.request.urlopen(self.URL)
-        self.level = '0'
+        self.level = 0
 
     async def get_level(self):
         soup = BeautifulSoup(self.html_source, 'html.parser')
@@ -27,9 +27,9 @@ class OWStats:
 
         if (prestige1):
             self.level = str(int(level.text) + int(100))
-        elif(prestige2):
+        elif (prestige2):
             self.level = str(int(level.text) + int(200))
-        elif(prestige3):
+        elif (prestige3):
             self.level = str(int(level.text) + int(300))
         elif (prestige4):
             self.level = str(int(level.text) + int(400))
@@ -37,7 +37,9 @@ class OWStats:
             self.level = str(int(level.text) + int(500))
         else:
             self.level = str(level.text)
-        
 
     async def display_level(self, client, channel):
+        if (self.level == 0)
+            await client.send_message(channel, 'Level not found for ' + self.battle_tag)
+        else:
             await client.send_message(channel, self.battle_tag + ' is level ' + self.level)
