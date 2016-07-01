@@ -47,15 +47,11 @@ A WIP Discord Bot using Python 3.5 along with the API Wrapper written by Rapptz.
 | $ow time [enter battle tag here] | displays time spent in game |
 | $ow level [enter battle tag here] | displays overwatch level of player |
 
-
-
-
 ## Setting up
-If you wish to use a separate account to run the bot, then you can just fill in the email, password, LoL API Key, and
-region inside config.py. You must also enable the client to use the email and password in lolbot.py and disable it from using
-the token. (By default, the bot will use the token. I'll probably make this more user-friendly in the near future.)
+Enter the token credential inside config.py and it should be good to go. 
 
-If you wish to use oauth2, then you can just enter the Token, LoL API Key, and region inside config.py.
+If you want to use the league api to get ranked stats or if you want to use lolfantasy, just enter the information
+needed inside config.py also.
 
 When using the lolfantasy module, you need to download PhantomJS, extract the zip, get the path to phantomjs.exe
 and place it inside the directory variable in config.py.
