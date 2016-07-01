@@ -5,10 +5,12 @@ import discord
 import logger
 import config
 from modules.lolrank import LOLRank
-from modules.lolfantasy import LOLFantasy
 from modules.lolmisc import Misc
 from modules.owstats import OWStats
 client = discord.Client()
+
+if (config.enable_fantasy == True):
+    from modules.lolfantasy import LOLFantasy
 
 @client.async_event
 async def on_ready():
@@ -52,29 +54,44 @@ async def on_message(message):
             
     elif message.content.startswith('$fantasy teams'):
         fantasyID = message.content[15:].replace (' ', '')
-        
-        team = LOLFantasy(fantasyID)
-        await team.get_team_names()
-        await team.display_team_names(client, message.channel)
+
+        try:
+            team = LOLFantasy(fantasyID)
+            await team.get_team_names()
+            await team.display_team_names(client, message.channel)
+        except:
+            await client.send_message(message.channel, 'Failed to get fantasy stats.' +
+                                      ' Check if fantasy is enabled in config.py or if a valid ID' +
+                                      ' was entered.')
         
     elif message.content.startswith('$fantasy summoners'):
         fantasyID = message.content[19:].replace(' ', '')
 
-        summoner = LOLFantasy(fantasyID)
-        await summoner.get_summoner_names()
-        await summoner.display_summoner_names(client, message.channel)
+        try:
+            summoner = LOLFantasy(fantasyID)
+            await summoner.get_summoner_names()
+            await summoner.display_summoner_names(client, message.channel)
+        except:
+            await client.send_message(message.channel, 'Failed to get fantasy stats.' +
+                                      ' Check if fantasy is enabled in config.py or if a valid ID' +
+                                      ' was entered.')
 
     elif message.content.startswith('$fantasy league'):
         fantasyID = message.content[15:].replace(' ', '')
 
-        table = LOLFantasy(fantasyID)
-        await table.get_summoner_names()
-        await table.get_team_names()
-        await table.get_total_points()
-        await table.get_wins()
-        await table.get_ties()
-        await table.get_losses()
-        await table.display_league(client, message.channel)
+        try:
+            table = LOLFantasy(fantasyID)
+            await table.get_summoner_names()
+            await table.get_team_names()
+            await table.get_total_points()
+            await table.get_wins()
+            await table.get_ties()
+            await table.get_losses()
+            await table.display_league(client, message.channel)
+        except:
+            await client.send_message(message.channel, 'Failed to get fantasy stats.' +
+                                      ' Check if fantasy is enabled in config.py or if a valid ID' +
+                                      ' was entered.')
 
     elif message.content.startswith('$ow level'):
         battle_tag = message.content[10:].replace('#', '-')
@@ -129,7 +146,5 @@ async def on_message(message):
         await general.get_win_percentage()
         await general.get_time_played()
         await general.display_quick_info(client, message.channel)
-               
-#if you want to use email and password, enable below and disable client.run(config.token)
-#client.run(config.email, config.password)
+
 client.run(config.token)

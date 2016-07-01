@@ -1,7 +1,5 @@
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -16,11 +14,7 @@ class LOLFantasy:
         self.fantasyID = fantasyID
         self.driver = webdriver.PhantomJS(executable_path=config.directory, service_args=options)
         self.driver.get('http://fantasy.na.lolesports.com/en-US/league/' + fantasyID)
-        
-        wait = WebDriverWait(self.driver, 10)
-        element = wait.until(EC.presence_of_all_elements_located)
-        self.driver.quit()
-        
+        self.driver.implicitly_wait(5)
         self.html_source = self.driver.page_source
         self.team_names = []
         self.summoner_names = []
@@ -29,6 +23,7 @@ class LOLFantasy:
         self.ties = []
         self.losses = []
         self.soup = BeautifulSoup(self.html_source, 'html.parser')
+        self.driver.quit()
 
         
 
