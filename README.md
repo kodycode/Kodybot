@@ -40,11 +40,17 @@ A WIP Discord Bot using Python 3.5 along with the API Wrapper written by Rapptz.
 | Commands      | Output        |
 | ------------- |:-------------:|
 | $ow quick [enter battle tag here] | displays level, wins, losses, win percentage, time played |
+| $ow competitive [enter battle tag here] | displays level and COMPETITIVE wins, losses, win percentage, time played |
 | $ow topfive [enter battle tag here] | displays top five heroes and hours spent on them |
+| $ow rtopfive [enter battle tag here] | display COMPETITIVE top five heroes and hours spent on them |
 | $ow wins [enter battle tag here] | displays number of wins |
+| $ow rwins [enter battle tag here] | displays COMPETITIVE number of wins |
 | $ow losses [enter battle tag here] | displays losses |
+| $ow rlosses [enter battle tag here] | displays COMPETITIVE losses |
 | $ow percentage [enter batle tag here] | displays win percentage |
+| $ow rpercentage [enter batle tag here] | displays COMPETITIVE win percentage |
 | $ow time [enter battle tag here] | displays time spent in game |
+| $ow rtime [enter battle tag here] | displays time spent in COMPETITIVE game |
 | $ow level [enter battle tag here] | displays overwatch level of player |
 
 ## Setting up
