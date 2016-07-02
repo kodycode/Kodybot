@@ -156,6 +156,13 @@ async def on_message(message):
         await time_played.get_ranked_time_played()
         await time_played.display_ranked_time_played(client, message.channel)
 
+    elif message.content.startswith('$ow ttime'):
+        battle_tag = message.content[10:].replace('#','-')
+
+        time_played = OWStats(battle_tag)
+        await time_played.get_total_time_played()
+        await time_played.display_total_time_played(client, message.channel)
+
     elif message.content.startswith('$ow topfive'):
         battle_tag = message.content[12:].replace('#','-')
 

@@ -111,8 +111,40 @@ class OWStats:
     async def display_ranked_time_played(self, client, channel):
         await client.send_message(channel, self.battle_tag + ' has played competitive play Overwatch for ' + self.ranked_time_played)
 
-    #async def display_total_time_played(self, client, channel):
-        #await client.send_message(channel, self.battle_tag + ' has played Overwatch for ' + self.ranked_time_played
+        table = self.soup.find_all('table', {'class': 'data-table'})
+        td = table[191].find_all('td')
+        
+        #Checks if profile is still using score metrics
+        if (len(td) == 12):
+            self.ranked_time_played = td[11].text
+        else:
+            self.ranked_time_played = td[9].text
+
+    async def get_total_time_played(self):
+        ### Quick Play Time
+        table = self.soup.find_all('table', {'class': 'data-table'})
+        td = table[6].find_all('td')
+        
+        #Checks if profile is still using score metrics
+        if (len(td) == 12):
+            time_played1 = td[11].text.replace(' hours', '')
+        else:
+            time_played1 = td[9].text.replace(' hours', '')
+
+        ### Competitive Play Time
+        table = self.soup.find_all('table', {'class': 'data-table'})
+        td = table[191].find_all('td')
+        
+        #Checks if profile is still using score metrics
+        if (len(td) == 12):
+            time_played2 = td[11].text.replace(' hours', '')
+        else:
+            time_played2 = td[9].text.replace(' hours', '')
+
+        self.total_time_played = str(int(time_played1) + int(time_played2))
+
+    async def display_total_time_played(self, client, channel):
+        await client.send_message(channel, self.battle_tag + ' has played Overwatch for ' + self.total_time_played + ' hours overall')
 
     async def get_level(self):
         level = self.soup.find('div', {'class': 'u-vertical-center'})
@@ -171,7 +203,6 @@ class OWStats:
                     self.ranked_top_heroes.append(hero.text)
 
                 count = count + 1
-        
 
     async def get_top_five_heroes_hours(self):
         count = 0
