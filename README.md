@@ -51,6 +51,7 @@ A WIP Discord Bot using Python 3.5 along with the API Wrapper written by Rapptz.
 | $ow rpercentage [enter batle tag here] | displays COMPETITIVE win percentage |
 | $ow time [enter battle tag here] | displays time spent in game |
 | $ow rtime [enter battle tag here] | displays time spent in COMPETITIVE game |
+| $ow ttime [enter battle tag here] | displays time spent in game overall |
 | $ow level [enter battle tag here] | displays overwatch level of player |
 
 ## Setting up
