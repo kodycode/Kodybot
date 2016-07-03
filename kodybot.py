@@ -93,6 +93,13 @@ async def on_message(message):
                                       ' Check if fantasy is enabled in config.py or if a valid ID' +
                                       ' was entered.')
 
+    elif message.content.startswith('$ow skill'):
+        battle_tag = message.content[10:].replace('#', '-')
+        
+        skill = OWStats(battle_tag)
+        await skill.get_skill_rating()
+        await skill.display_skill_rating(client, message.channel)
+
     elif message.content.startswith('$ow level'):
         battle_tag = message.content[10:].replace('#', '-')
 
@@ -182,23 +189,24 @@ async def on_message(message):
     elif message.content.startswith('$ow quick'):
         battle_tag = message.content[10:].replace('#','-')
 
-        general = OWStats(battle_tag)
-        await general.get_level()
-        await general.get_wins()
-        await general.get_losses()
-        await general.get_win_percentage()
-        await general.get_time_played()
-        await general.display_quick_info(client, message.channel)
+        quick = OWStats(battle_tag)
+        await quick.get_level()
+        await quick.get_wins()
+        await quick.get_losses()
+        await quick.get_win_percentage()
+        await quick.get_time_played()
+        await quick.display_quick_info(client, message.channel)
 
     elif message.content.startswith('$ow competitive'):
         battle_tag = message.content[16:].replace('#','-')
 
-        general = OWStats(battle_tag)
-        await general.get_level()
-        await general.get_ranked_wins()
-        await general.get_ranked_losses()
-        await general.get_ranked_win_percentage()
-        await general.get_ranked_time_played()
-        await general.display_ranked_info(client, message.channel)
+        competitive = OWStats(battle_tag)
+        await competitive.get_skill_rating()
+        await competitive.get_level()
+        await competitive.get_ranked_wins()
+        await competitive.get_ranked_losses()
+        await competitive.get_ranked_win_percentage()
+        await competitive.get_ranked_time_played()
+        await competitive.display_ranked_info(client, message.channel)
 
 client.run(config.token)

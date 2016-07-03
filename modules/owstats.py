@@ -5,6 +5,7 @@ class OWStats:
 
     def __init__(self, battle_tag):
         self.battle_tag = battle_tag.replace('-','#')
+        self.skill_rating = 0
         self.level = 0
         self.wins = 0
         self.ranked_wins = 0
@@ -21,6 +22,34 @@ class OWStats:
         self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + battle_tag
         self.html_source = urllib.request.urlopen(self.URL)
         self.soup = BeautifulSoup(self.html_source, 'html.parser')
+
+    async def get_skill_rating(self):
+        try:
+            for rank in self.soup.find_all('div', {'class': 'competitive-rank'}): 
+                rating = self.soup.find_all('div', {'class': 'u-align-center h6'})
+                self.skill_rating = str(rating)
+
+            #Trried to avoid getting the rating this way but
+            #I couldn't seem to use '.replace()' or extract as
+            #a '.text' since its within <img></img> tag
+
+            #if rating is 1 digit
+            if (len(self.skill_rating) == 40):
+                self.skill_rating = self.skill_rating[10:35]
+            #if rating is 2 digits
+            elif (len(self.skill_rating) == 41):
+                self.skill_rating = self.skill_rating[32:34]
+            #if rating is (ever) 3 digits
+            elif (len(self.skill_rating) == 42):
+                self.skill_rating = self.skill_rating[32:35]
+        except AttributeError as e:
+            self.skill_rating = 'Skill Rating not found'
+
+    async def display_skill_rating(self, client, channel):
+        if (self.skill_rating == 0):
+            await client.send_message(channel, 'No Skill Rating found for this player')
+        else:
+            await client.send_message(channel, self.battle_tag + ' has a skill rating of ' + self.skill_rating)
         
     async def get_wins(self):     
         table = self.soup.find_all('table', {'class': 'data-table'})
@@ -60,7 +89,6 @@ class OWStats:
         
         self.ranked_losses = int(td[3].text.replace(',','')) - int(td[1].text.replace(',',''))
         self.ranked_losses = str(self.ranked_losses)
-        print(self.ranked_losses)
 
     async def display_ranked_losses(self, client, channel):
         await client.send_message(channel, self.battle_tag + ' has lost ' + self.ranked_losses + ' ranked games')
@@ -263,6 +291,7 @@ class OWStats:
         display = []
         display.append(self.battle_tag)
         display.append('-----------------------')
+        display.append('Skill Rating: ' + self.skill_rating)
         display.append('Level: ' + self.level)
         display.append('Wins: ' + self.ranked_wins)
         display.append('Losses: ' + self.ranked_losses)
