@@ -40,9 +40,10 @@ A WIP Discord Bot using Python 3.5 along with the API Wrapper written by Rapptz.
 | Commands      | Output        |
 | ------------- |:-------------:|
 | $ow quick [enter battle tag here] | displays level, wins, losses, win percentage, time played |
-| $ow competitive [enter battle tag here] | displays level and COMPETITIVE wins, losses, win percentage, time played |
+| $ow competitive [enter battle tag here] | displays skill rating, level and COMPETITIVE wins, losses, win percentage, time played |
 | $ow topfive [enter battle tag here] | displays top five heroes and hours spent on them |
 | $ow rtopfive [enter battle tag here] | display COMPETITIVE top five heroes and hours spent on them |
+| $ow skill [enter battle tag here] | displays skill rating |
 | $ow wins [enter battle tag here] | displays number of wins |
 | $ow rwins [enter battle tag here] | displays COMPETITIVE number of wins |
 | $ow losses [enter battle tag here] | displays losses |
