@@ -32,10 +32,12 @@ class OWStats:
         await client.send_message(channel, self.battle_tag + ' has won ' + self.wins + ' games')
 
     async def get_ranked_wins(self):
-         table = self.soup.find_all('table', {'class': 'data-table'})
-         td = table[191].find_all('td')
+        for competitive in self.soup.find('div', {'id': 'competitive-play'}):
+            table = competitive.find_all('table', {'class': 'data-table'})
 
-         self.ranked_wins = td[1].text.replace(',','')
+        td = table[6].find_all('td')
+
+        self.ranked_wins = td[1].text.replace(',','')
 
     async def display_ranked_wins(self, client, channel):
         await client.send_message(channel, self.battle_tag + ' has won ' + self.ranked_wins + ' ranked games')
@@ -51,9 +53,11 @@ class OWStats:
         await client.send_message(channel, self.battle_tag + ' has lost ' + self.losses + ' games')
 
     async def get_ranked_losses(self):
-        table = self.soup.find_all('table', {'class': 'data-table'})
-        td = table[191].find_all('td')
+        for competitive in self.soup.find('div', {'id': 'competitive-play'}):
+            table = competitive.find_all('table', {'class': 'data-table'})
 
+        td = table[6].find_all('td')
+        
         self.ranked_losses = int(td[3].text.replace(',','')) - int(td[1].text.replace(',',''))
         self.ranked_losses = str(self.ranked_losses)
         print(self.ranked_losses)
@@ -74,8 +78,10 @@ class OWStats:
         await client.send_message(channel, self.battle_tag + "'s win percentage is %.2f" % self.win_percentage + '%')
 
     async def get_ranked_win_percentage(self):
-        table = self.soup.find_all('table', {'class': 'data-table'})
-        td = table[191].find_all('td')
+        for competitive in self.soup.find('div', {'id': 'competitive-play'}):
+            table = competitive.find_all('table', {'class': 'data-table'})
+
+        td = table[6].find_all('td')
         
         wins = int(td[1].text.replace(',',''))
         total_games = int(td[3].text.replace(',',''))
@@ -99,8 +105,10 @@ class OWStats:
         await client.send_message(channel, self.battle_tag + ' has played quick play Overwatch for ' + self.time_played)
 
     async def get_ranked_time_played(self):
-        table = self.soup.find_all('table', {'class': 'data-table'})
-        td = table[191].find_all('td')
+        for competitive in self.soup.find('div', {'id': 'competitive-play'}):
+            table = competitive.find_all('table', {'class': 'data-table'})
+
+        td = table[6].find_all('td')
         
         #Checks if profile is still using score metrics
         if (len(td) == 12):
@@ -110,15 +118,6 @@ class OWStats:
 
     async def display_ranked_time_played(self, client, channel):
         await client.send_message(channel, self.battle_tag + ' has played competitive play Overwatch for ' + self.ranked_time_played)
-
-        table = self.soup.find_all('table', {'class': 'data-table'})
-        td = table[191].find_all('td')
-        
-        #Checks if profile is still using score metrics
-        if (len(td) == 12):
-            self.ranked_time_played = td[11].text
-        else:
-            self.ranked_time_played = td[9].text
 
     async def get_total_time_played(self):
         ### Quick Play Time
@@ -132,8 +131,10 @@ class OWStats:
             time_played1 = td[9].text.replace(' hours', '')
 
         ### Competitive Play Time
-        table = self.soup.find_all('table', {'class': 'data-table'})
-        td = table[191].find_all('td')
+        for competitive in self.soup.find('div', {'id': 'competitive-play'}):
+            table = competitive.find_all('table', {'class': 'data-table'})
+
+        td = table[6].find_all('td')
         
         #Checks if profile is still using score metrics
         if (len(td) == 12):
