@@ -48,8 +48,8 @@ A WIP Discord Bot using Python 3.5 along with the API Wrapper written by Rapptz.
 | $ow rwins [enter battle tag here] | displays COMPETITIVE number of wins |
 | $ow losses [enter battle tag here] | displays losses |
 | $ow rlosses [enter battle tag here] | displays COMPETITIVE losses |
-| $ow percentage [enter batle tag here] | displays win percentage |
-| $ow rpercentage [enter batle tag here] | displays COMPETITIVE win percentage |
+| $ow percentage [enter battle tag here] | displays win percentage |
+| $ow rpercentage [enter battle tag here] | displays COMPETITIVE win percentage |
 | $ow time [enter battle tag here] | displays time spent in game |
 | $ow rtime [enter battle tag here] | displays time spent in COMPETITIVE game |
 | $ow ttime [enter battle tag here] | displays time spent in game overall |
