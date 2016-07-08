@@ -10,7 +10,7 @@ A WIP Discord Bot using Python 3.5 along with the API Wrapper written by Rapptz.
  
 * ```beautifulsoup4``` package
 
-* ```urllib3``` package
+* ```urllib.request``` package
 
 
 ##### If you want to use the FantasyLCS commands
