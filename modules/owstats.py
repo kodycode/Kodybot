@@ -1,10 +1,13 @@
+import discord
+from discord.ext import commands
 from bs4 import BeautifulSoup
 import urllib.request
 
 class OWStats:
 
-    def __init__(self, battle_tag):
-        self.battle_tag = battle_tag.replace('-','#')
+    def __init__(self, bot):
+        self.bot = bot
+        self.battle_tag = ''
         self.skill_rating = 0
         self.level = 0
         self.wins = 0
@@ -19,17 +22,40 @@ class OWStats:
         self.ranked_top_heroes = []
         self.top_hours = []
         self.ranked_top_hours = []
-        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + battle_tag
-        self.html_source = urllib.request.urlopen(self.URL)
-        self.soup = BeautifulSoup(self.html_source, 'html.parser')
+        self.html_source = ''
+        
+    @commands.group(pass_context = True)
+    async def ow(self, ctx): 
+        if (ctx.invoked_subcommand is None):
+            await self.bot.say('Incorrect random subcommand passed.')
+    
+    @ow.group(name='skill', pass_context=True)
+    async def display_skill_rating(self, ctx, battle_tag : str):
+        self.battle_tag = battle_tag.replace('#','-')
+        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
+        self.battle_tag = self.battle_tag.replace('-','#')
+        try:
+            self.html_source = urllib.request.urlopen(self.URL)
+            self.soup = BeautifulSoup(self.html_source, 'html.parser')
+            
+            await ctx.invoke(self.get_skill_rating)
+        
+            if (self.skill_rating == 0):
+                await self.bot.say('No Skill Rating found for this player')
+            else:
+                await self.bot.say(self.battle_tag + ' has a skill rating of ' + self.skill_rating)
+        except urllib.error.HTTPError as e:
+            await self.bot.say('Error in finding data from battle tag ' + self.battle_tag
+                             + '. Did you enter the correct battle tag?')
 
+    @display_skill_rating.command(name='', hidden=True)
     async def get_skill_rating(self):
         try:
             for rank in self.soup.find_all('div', {'class': 'competitive-rank'}): 
                 rating = self.soup.find_all('div', {'class': 'u-align-center h6'})
                 self.skill_rating = str(rating)
 
-            #Trried to avoid getting the rating this way but
+            #Tried to avoid getting the rating this way but
             #I couldn't seem to use '.replace()' or extract as
             #a '.text' since its within <img></img> tag
 
@@ -45,21 +71,44 @@ class OWStats:
         except AttributeError as e:
             self.skill_rating = 'Skill Rating not found'
 
-    async def display_skill_rating(self, client, channel):
-        if (self.skill_rating == 0):
-            await client.send_message(channel, 'No Skill Rating found for this player')
-        else:
-            await client.send_message(channel, self.battle_tag + ' has a skill rating of ' + self.skill_rating)
-        
-    async def get_wins(self):     
+    @ow.group(name='wins', pass_context=True)
+    async def display_wins(self, ctx, battle_tag : str):
+        self.battle_tag = battle_tag.replace('#','-')
+        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
+        self.battle_tag = self.battle_tag.replace('-','#')
+        try:
+            self.html_source = urllib.request.urlopen(self.URL)
+            self.soup = BeautifulSoup(self.html_source, 'html.parser')
+                
+            await ctx.invoke(self.get_wins)
+            await self.bot.say(self.battle_tag + ' has won ' + self.wins + ' games')
+        except urllib.error.HTTPError as e:
+            await self.bot.say('Error in finding data from battle tag ' + self.battle_tag
+                             + '. Did you enter the correct battle tag?')
+
+    @display_wins.command(name='get', hidden = True)
+    async def get_wins(self):
         table = self.soup.find_all('table', {'class': 'data-table'})
         td = table[6].find_all('td')
         
         self.wins = td[1].text.replace(',','')
 
-    async def display_wins(self, client, channel):
-        await client.send_message(channel, self.battle_tag + ' has won ' + self.wins + ' games')
+    @ow.group(name='rwins', pass_context=True)
+    async def display_ranked_wins(self, ctx, battle_tag : str):
+        self.battle_tag = battle_tag.replace('#','-')
+        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
+        self.battle_tag = self.battle_tag.replace('-','#')
+        try:
+            self.html_source = urllib.request.urlopen(self.URL)
+            self.soup = BeautifulSoup(self.html_source, 'html.parser')
+            
+            await ctx.invoke(self.get_ranked_wins)
+            await self.bot.say(self.battle_tag + ' has won ' + self.ranked_wins + ' ranked games')
+        except urllib.error.HTTPError as e:
+            await self.bot.say('Error in finding data from battle tag ' + self.battle_tag
+                             + '. Did you enter the correct battle tag?')
 
+    @display_ranked_wins.command(name='', hidden=True)
     async def get_ranked_wins(self):
         for competitive in self.soup.find('div', {'id': 'competitive-play'}):
             table = competitive.find_all('table', {'class': 'data-table'})
@@ -68,9 +117,22 @@ class OWStats:
 
         self.ranked_wins = td[1].text.replace(',','')
 
-    async def display_ranked_wins(self, client, channel):
-        await client.send_message(channel, self.battle_tag + ' has won ' + self.ranked_wins + ' ranked games')
+    @ow.group(name='losses', pass_context=True)
+    async def display_losses(self, ctx, battle_tag : str):
+        self.battle_tag = battle_tag.replace('#','-')
+        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
+        self.battle_tag = self.battle_tag.replace('-','#')
+        try:
+            self.html_source = urllib.request.urlopen(self.URL)
+            self.soup = BeautifulSoup(self.html_source, 'html.parser')
+            
+            await ctx.invoke(self.get_losses)
+            await self.bot.say(self.battle_tag + ' has lost ' + self.losses + ' games')
+        except urllib.error.HTTPError as e:
+            await self.bot.say('Error in finding data from battle tag ' + self.battle_tag
+                             + '. Did you enter the correct battle tag?')
 
+    @display_losses.command(name='', hidden=True)
     async def get_losses(self):
         table = self.soup.find_all('table', {'class': 'data-table'})
         td = table[6].find_all('td')
@@ -78,10 +140,24 @@ class OWStats:
         self.losses = int(td[3].text.replace(',','')) - int(td[1].text.replace(',',''))
         self.losses = str(self.losses)
 
-    async def display_losses(self, client, channel):
-        await client.send_message(channel, self.battle_tag + ' has lost ' + self.losses + ' games')
+    @ow.group(name='rlosses', pass_context=True)
+    async def display_ranked_losses(self, ctx, battle_tag : str):
+        self.battle_tag = battle_tag.replace('#','-')
+        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
+        self.battle_tag = self.battle_tag.replace('-','#')
+        try:
+            self.html_source = urllib.request.urlopen(self.URL)
+            self.soup = BeautifulSoup(self.html_source, 'html.parser')
+            
+            await ctx.invoke(self.get_ranked_losses)
+            await self.bot.say(self.battle_tag + ' has lost ' + self.ranked_losses + ' ranked games')
+        except urllib.error.HTTPError as e:
+            await self.bot.say('Error in finding data from battle tag ' + self.battle_tag
+                             + '. Did you enter the correct battle tag?')
 
+    @display_ranked_losses.command(name='', hidden=True)
     async def get_ranked_losses(self):
+        
         for competitive in self.soup.find('div', {'id': 'competitive-play'}):
             table = competitive.find_all('table', {'class': 'data-table'})
 
@@ -90,9 +166,22 @@ class OWStats:
         self.ranked_losses = int(td[3].text.replace(',','')) - int(td[1].text.replace(',',''))
         self.ranked_losses = str(self.ranked_losses)
 
-    async def display_ranked_losses(self, client, channel):
-        await client.send_message(channel, self.battle_tag + ' has lost ' + self.ranked_losses + ' ranked games')
-
+    @ow.group(name='percentage', pass_context=True)
+    async def display_win_percentage(self, ctx, battle_tag : str):
+        self.battle_tag = battle_tag.replace('#','-')
+        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
+        self.battle_tag = self.battle_tag.replace('-','#')
+        try:
+            self.html_source = urllib.request.urlopen(self.URL)
+            self.soup = BeautifulSoup(self.html_source, 'html.parser')
+            
+            await ctx.invoke(self.get_win_percentage)
+            await self.bot.say(self.battle_tag + "'s win percentage is %.2f" % self.win_percentage + '%')
+        except urllib.error.HTTPError as e:
+            await self.bot.say('Error in finding data from battle tag ' + self.battle_tag
+                             + '. Did you enter the correct battle tag?')
+        
+    @display_win_percentage.command(name='', hidden=True)
     async def get_win_percentage(self):
         table = self.soup.find_all('table', {'class': 'data-table'})
         td = table[6].find_all('td')
@@ -102,9 +191,22 @@ class OWStats:
         
         self.win_percentage = (wins/total_games) * 100
 
-    async def display_win_percentage(self, client, channel):
-        await client.send_message(channel, self.battle_tag + "'s win percentage is %.2f" % self.win_percentage + '%')
+    @ow.group(name='rpercentage', pass_context=True)
+    async def display_ranked_win_percentage(self, ctx, battle_tag : str):
+        self.battle_tag = battle_tag.replace('#','-')
+        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
+        self.battle_tag = self.battle_tag.replace('-','#')
+        try:
+            self.html_source = urllib.request.urlopen(self.URL)
+            self.soup = BeautifulSoup(self.html_source, 'html.parser')
+            
+            await ctx.invoke(self.get_ranked_win_percentage)
+            await self.bot.say(self.battle_tag + "'s win percentage is %.2f" % self.ranked_win_percentage + '%')
+        except urllib.error.HTTPError as e:
+            await self.bot.say('Error in finding data from battle tag ' + self.battle_tag
+                             + '. Did you enter the correct battle tag?')
 
+    @display_ranked_win_percentage.command(name='', hidden=True)
     async def get_ranked_win_percentage(self):
         for competitive in self.soup.find('div', {'id': 'competitive-play'}):
             table = competitive.find_all('table', {'class': 'data-table'})
@@ -116,10 +218,24 @@ class OWStats:
         
         self.ranked_win_percentage = (wins/total_games) * 100
 
-    async def display_ranked_win_percentage(self, client, channel):
-        await client.send_message(channel, self.battle_tag + "'s win percentage is %.2f" % self.ranked_win_percentage + '%')
+    @ow.group(name='time', pass_context=True)
+    async def display_time_played(self, ctx, battle_tag : str):
+        self.battle_tag = battle_tag.replace('#','-')
+        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
+        self.battle_tag = self.battle_tag.replace('-','#')
+        try:
+            self.html_source = urllib.request.urlopen(self.URL)
+            self.soup = BeautifulSoup(self.html_source, 'html.parser')
+            
+            await ctx.invoke(self.get_time_played)
+            await self.bot.say(self.battle_tag + ' has played quick play Overwatch for ' + self.time_played)
+        except urllib.error.HTTPError as e:
+            await self.bot.say('Error in finding data from battle tag ' + self.battle_tag
+                             + '. Did you enter the correct battle tag?')
 
+    @display_time_played.command(name='', hidden=True)
     async def get_time_played(self):
+        
         table = self.soup.find_all('table', {'class': 'data-table'})
         td = table[6].find_all('td')
         
@@ -129,10 +245,24 @@ class OWStats:
         else:
             self.time_played = td[9].text
 
-    async def display_time_played(self, client, channel):
-        await client.send_message(channel, self.battle_tag + ' has played quick play Overwatch for ' + self.time_played)
+    @ow.group(name='rtime', pass_context=True)
+    async def display_ranked_time_played(self, ctx, battle_tag : str):
+        self.battle_tag = battle_tag.replace('#','-')
+        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
+        self.battle_tag = self.battle_tag.replace('-','#')
+        try:
+            self.html_source = urllib.request.urlopen(self.URL)
+            self.soup = BeautifulSoup(self.html_source, 'html.parser')
+            
+            await ctx.invoke(self.get_ranked_time_played)
+            await self.bot.say(self.battle_tag + ' has played competitive play Overwatch for ' + self.ranked_time_played)
+        except urllib.error.HTTPError as e:
+            await self.bot.say('Error in finding data from battle tag ' + self.battle_tag
+                             + '. Did you enter the correct battle tag?')
 
+    @display_ranked_time_played.command(name='', hidden=True)
     async def get_ranked_time_played(self):
+        
         for competitive in self.soup.find('div', {'id': 'competitive-play'}):
             table = competitive.find_all('table', {'class': 'data-table'})
 
@@ -144,10 +274,25 @@ class OWStats:
         else:
             self.ranked_time_played = td[9].text
 
-    async def display_ranked_time_played(self, client, channel):
-        await client.send_message(channel, self.battle_tag + ' has played competitive play Overwatch for ' + self.ranked_time_played)
+    @ow.group(name='ttime', pass_context=True)
+    async def display_total_time_played(self, ctx, battle_tag : str):
+        self.battle_tag = battle_tag.replace('#','-')
+        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
+        self.battle_tag = self.battle_tag.replace('-','#')
+        try:
+            self.html_source = urllib.request.urlopen(self.URL)
+            self.soup = BeautifulSoup(self.html_source, 'html.parser')
+            
+            await ctx.invoke(self.get_total_time_played)
+            await self.bot.say(self.battle_tag + ' has played Overwatch for ' + self.total_time_played + ' hours overall')
+        except urllib.error.HTTPError as e:
+            await self.bot.say('Error in finding data from battle tag ' + self.battle_tag
+                             + '. Did you enter the correct battle tag?')
+                
 
+    @display_total_time_played.command(name='', hidden=True)
     async def get_total_time_played(self):
+        
         ### Quick Play Time
         table = self.soup.find_all('table', {'class': 'data-table'})
         td = table[6].find_all('td')
@@ -172,10 +317,27 @@ class OWStats:
 
         self.total_time_played = str(int(time_played1) + int(time_played2))
 
-    async def display_total_time_played(self, client, channel):
-        await client.send_message(channel, self.battle_tag + ' has played Overwatch for ' + self.total_time_played + ' hours overall')
+    @ow.group(name='level', pass_context=True)
+    async def display_level(self, ctx, battle_tag : str):
+        self.battle_tag = battle_tag.replace('#','-')
+        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
+        self.battle_tag = self.battle_tag.replace('-','#')
+        try:
+            self.html_source = urllib.request.urlopen(self.URL)
+            self.soup = BeautifulSoup(self.html_source, 'html.parser')
+            
+            await ctx.invoke(self.get_level)
+            if (self.level == 0):
+                await self.bot.say('Level not found for ' + self.battle_tag)
+            else:
+                await self.bot.say(self.battle_tag + ' is level ' + self.level)
+        except urllib.error.HTTPError as e:
+            await self.bot.say('Error in finding data from battle tag ' + self.battle_tag
+                             + '. Did you enter the correct battle tag?')
 
+    @display_level.command(name='', hidden=True)
     async def get_level(self):
+        
         level = self.soup.find('div', {'class': 'u-vertical-center'})
         
         prestige1 = self.soup.find('div', {'style': 'background-image:url(https://' +
@@ -202,13 +364,31 @@ class OWStats:
         else:
             self.level = str(level.text)
 
-    async def display_level(self, client, channel):
-        if (self.level == 0):
-            await client.send_message(channel, 'Level not found for ' + self.battle_tag)
-        else:
-            await client.send_message(channel, self.battle_tag + ' is level ' + self.level)
+    @ow.group(name='topfive', pass_context=True)
+    async def display_top_five_heroes(self, ctx, battle_tag : str):
+        self.battle_tag = battle_tag.replace('#','-')
+        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
+        self.battle_tag = self.battle_tag.replace('-','#')
+        try:
+            self.html_source = urllib.request.urlopen(self.URL)
+            self.soup = BeautifulSoup(self.html_source, 'html.parser')
+                
+            await ctx.invoke(self.get_top_five_heroes)
+            await ctx.invoke(self.get_top_five_heroes_hours)
+            display = []
+            display.append('Most played heroes for ' + self.battle_tag + ' are:')
 
+            for h, t in zip(self.top_heroes, self.top_hours):
+                display.append(h + ' - ' + t)
+        
+            await self.bot.say('\n'.join(map(str,display)))
+        except urllib.error.HTTPError as e:
+            await self.bot.say('Error in finding data from battle tag ' + self.battle_tag
+                             + '. Did you enter the correct battle tag?')  
+
+    @display_top_five_heroes.command(name='', hidden=True)
     async def get_top_five_heroes(self):
+        top_heroes = []
         count = 0
         for competitive in self.soup.find_all('div', {'id': 'quick-play'}):
             for bar in self.soup.find_all('div', {'class': 'bar-text'}):
@@ -216,13 +396,51 @@ class OWStats:
                     break
             
                 for hero in bar.find_all('div', {'class': 'title'}):
-                    self.top_heroes.append(hero.text)
+                    top_heroes.append(hero.text)
                 
                 count = count+1
 
+        self.top_heroes = top_heroes
+                
+    @display_top_five_heroes.command(name='', hidden=True)
+    async def get_top_five_heroes_hours(self):
+        top_hours = []
+        count = 0
+        for bar in self.soup.find_all('div', {'class': 'bar-text'}):
+            if (count == 5):
+                break
+            
+            for hours in bar.find_all('div', {'class': 'description'}):
+                top_hours.append(hours.text)
+                
+            count = count+1
+        self.top_hours = top_hours
+
+    @ow.group(name='rtopfive', pass_context=True)
+    async def display_ranked_top_five_heroes(self, ctx, battle_tag : str):
+        self.battle_tag = battle_tag.replace('#','-')
+        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
+        self.battle_tag = self.battle_tag.replace('-','#')
+        try:
+            self.html_source = urllib.request.urlopen(self.URL)
+            self.soup = BeautifulSoup(self.html_source, 'html.parser')
+                
+            await ctx.invoke(self.get_ranked_top_five_heroes)
+            await ctx.invoke(self.get_ranked_top_five_heroes_hours)
+                
+            display = []
+            display.append('Most played heroes for ' + self.battle_tag + ' in competitive are:')
+            for h, t in zip(self.ranked_top_heroes, self.ranked_top_hours):
+                display.append(h + ' - ' + t)
+        
+            await self.bot.say('\n'.join(map(str,display)))
+        except urllib.error.HTTPError as e:
+            await self.bot.say('Error in finding data from battle tag ' + self.battle_tag
+                             + '. Did you enter the correct battle tag?')        
+
+    @display_ranked_top_five_heroes.command(name='', hidden=True)
     async def get_ranked_top_five_heroes(self):
         count = 0
-        
         for competitive in self.soup.find_all('div', {'id': 'competitive-play'}):
             for bar in competitive.find_all('div', {'class': 'bar-text'}):
                 if (count == 5):
@@ -233,18 +451,7 @@ class OWStats:
 
                 count = count + 1
 
-    async def get_top_five_heroes_hours(self):
-        count = 0
-        
-        for bar in self.soup.find_all('div', {'class': 'bar-text'}):
-            if (count == 5):
-                break
-            
-            for hours in bar.find_all('div', {'class': 'description'}):
-                self.top_hours.append(hours.text)
-                
-            count = count+1
-
+    @display_ranked_top_five_heroes.command(name='', hidden=True)
     async def get_ranked_top_five_heroes_hours(self):
         count = 0
 
@@ -258,44 +465,67 @@ class OWStats:
                 
                 count = count+1
 
-    async def display_top_five_heroes(self, client, channel):
-        display = []
-        display.append('Most played heroes for ' + self.battle_tag + ' are:')
+    @ow.command(name='quick', pass_context=True)
+    async def display_quick_info(self, ctx, battle_tag : str):
+        self.battle_tag = battle_tag.replace('#','-')
+        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
+        self.battle_tag = self.battle_tag.replace('-','#')
+        try:
+            self.html_source = urllib.request.urlopen(self.URL)
+            self.soup = BeautifulSoup(self.html_source, 'html.parser')
 
-        for h, t in zip(self.top_heroes, self.top_hours):
-            display.append(h + ' - ' + t)
+            await ctx.invoke(self.get_level)
+            await ctx.invoke(self.get_wins)
+            await ctx.invoke(self.get_losses)
+            await ctx.invoke(self.get_win_percentage)
+            await ctx.invoke(self.get_time_played)
+            await ctx.invoke(self.get_total_time_played)
         
-        await client.send_message(channel, '\n'.join(map(str,display)))
+            display = []
+            display.append(self.battle_tag)
+            display.append('-----------------------')
+            display.append('Level: ' + self.level)
+            display.append('Wins: ' + self.wins)
+            display.append('Losses: ' + self.losses)
+            display.append('Win Percentage: %.2f%%' % self.win_percentage)
+            display.append('Time Played: ' + self.time_played)
+            display.append('Total Time Played: ' + self.total_time_played + ' hours')
+            await self.bot.say('\n'.join(map(str,display)))
+        except urllib.error.HTTPError as e:
+            await self.bot.say('Error in finding data from battle tag ' + self.battle_tag
+                             + '. Did you enter the correct battle tag?')
 
-    async def display_ranked_top_five_heroes(self, client, channel):
-        display = []
-        display.append('Most played heroes for ' + self.battle_tag + ' in competitive are:')
-
-        for h, t in zip(self.ranked_top_heroes, self.ranked_top_hours):
-            display.append(h + ' - ' + t)
-        
-        await client.send_message(channel, '\n'.join(map(str,display)))
+    @ow.command(name='competitive', pass_context=True)
+    async def display_ranked_info(self, ctx, battle_tag : str):
+        self.battle_tag = battle_tag.replace('#','-')
+        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
+        self.battle_tag = self.battle_tag.replace('-','#')
+        try:
+            self.html_source = urllib.request.urlopen(self.URL)
+            self.soup = BeautifulSoup(self.html_source, 'html.parser')
             
-    async def display_quick_info(self, client, channel):
-        display = []
-        display.append(self.battle_tag)
-        display.append('-----------------------')
-        display.append('Level: ' + self.level)
-        display.append('Wins: ' + self.wins)
-        display.append('Losses: ' + self.losses)
-        display.append('Win Percentage: %.2f%%' % self.win_percentage)
-        display.append('Time Played: ' + self.time_played)
-        await client.send_message(channel, '\n'.join(map(str,display)))
+            await ctx.invoke(self.get_skill_rating)
+            await ctx.invoke(self.get_level)
+            await ctx.invoke(self.get_ranked_wins)
+            await ctx.invoke(self.get_ranked_losses)
+            await ctx.invoke(self.get_ranked_win_percentage)
+            await ctx.invoke(self.get_ranked_time_played)
+            await ctx.invoke(self.get_total_time_played)
+        
+            display = []
+            display.append(self.battle_tag)
+            display.append('-----------------------')
+            display.append('Skill Rating: ' + self.skill_rating)
+            display.append('Level: ' + self.level)
+            display.append('Wins: ' + self.ranked_wins)
+            display.append('Losses: ' + self.ranked_losses)
+            display.append('Win Percentage: %.2f%%' % self.ranked_win_percentage)
+            display.append('Time Played: ' + self.ranked_time_played)
+            display.append('Total Time Played: ' + self.total_time_played + ' hours')
+            await self.bot.say('\n'.join(map(str,display)))
+        except urllib.error.HTTPError as e:
+            await self.bot.say('Error in finding data from battle tag ' + self.battle_tag
+                             + '. Did you enter the correct battle tag?')
 
-    async def display_ranked_info(self, client, channel):
-        display = []
-        display.append(self.battle_tag)
-        display.append('-----------------------')
-        display.append('Skill Rating: ' + self.skill_rating)
-        display.append('Level: ' + self.level)
-        display.append('Wins: ' + self.ranked_wins)
-        display.append('Losses: ' + self.ranked_losses)
-        display.append('Win Percentage: %.2f%%' % self.ranked_win_percentage)
-        display.append('Time Played: ' + self.ranked_time_played)
-        await client.send_message(channel, '\n'.join(map(str,display)))
-
+def setup(bot):
+    bot.add_cog(OWStats(bot))

@@ -1,3 +1,4 @@
+from discord.ext import commands
 import requests
 import os
 import sys
@@ -5,9 +6,9 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import config
 
 class LOLRank:
-    def __init__(self, summoner_name):
-        self.summoner = summoner_name.replace(' ', '')
-        self.summoner = self.summoner.lower()
+    
+    def __init__(self, bot):
+        self.bot = bot
         self.tier = 'Bronze'
         self.divison = 'V'
         self.lp = '0'
@@ -26,9 +27,19 @@ class LOLRank:
         response = requests.get(URL)
         
         return response.json()
+    
+    @commands.group(name='rank', pass_context=True)
+    async def display_ranked_data(self, ctx, *, summoner : str):
+        self.summoner = summoner.replace(' ', '')
+        self.summoner = self.summoner.lower()
 
+        await ctx.invoke(self.get_ranked_data)
+        
+        await self.bot.say(summoner + '\n-------------\nTier: ' + self.tier + '\nDivison: '+ self.division
+                                  + '\nLP: ' + self.lp + '\nWins: ' + self.wins + '\nLosses: ' + self.losses + '\n\n')
+
+    @display_ranked_data.group(name='', hidden=True)
     async def get_ranked_data(self):
-
         responseJSON = await self.get_summoner_ID(config.region, self.summoner, config.lol_api_key)
 
         ID = responseJSON[self.summoner]['id']
@@ -40,9 +51,6 @@ class LOLRank:
         self.lp = str(responseJSON2[ID][0]['entries'][0]['leaguePoints'])
         self.wins = str(responseJSON2[ID][0]['entries'][0]['wins'])
         self.losses = str(responseJSON2[ID][0]['entries'][0]['losses'])
-
-    async def display_ranked_data(self, client, channel):
-        await client.send_message(channel, self.summoner + '\n-------------\nTier: ' + self.tier + '\nDivison: '+ self.division
-                                  + '\nLP: ' + self.lp + '\nWins: ' + self.wins + '\nLosses: ' + self.losses + '\n\n')
         
-       
+def setup(bot):
+    bot.add_cog(LOLRank(bot))

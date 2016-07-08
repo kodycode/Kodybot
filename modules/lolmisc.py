@@ -1,12 +1,16 @@
 import discord
-import requests
+from discord.ext import commands
 
 class Misc:
-    def __init__(self, summoner):
-        self.summoner = summoner
+    
+    def __init__(self, bot):
+        self.bot = bot
+        self.avatar = ''
 
-    async def get_avatar(self):
-        self.avatar = 'https://avatar.leagueoflegends.com/NA/' + self.summoner + '.png'
-        
-    async def display_avatar(self, client, channel):
-        await client.send_message(channel, self.avatar)
+    @commands.group(name='icon')
+    async def display_icon(self, summoner: str):
+        self.avatar = 'https://avatar.leagueoflegends.com/NA/' + summoner + '.png'
+        await self.bot.say(self.avatar)
+
+def setup(bot):
+    bot.add_cog(Misc(bot))
