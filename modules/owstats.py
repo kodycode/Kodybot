@@ -55,19 +55,6 @@ class OWStats:
             rating = rank.find('div', {'class': 'u-align-center h6'})
             self.skill_rating = str(rating.text)
 
-            #Tried to avoid getting the rating this way but
-            #I couldn't seem to use '.replace()' or extract as
-            #a '.text' since its within <img></img> tag
-
-            #if rating is 1 digit
-            if (len(self.skill_rating) == 40):
-                self.skill_rating = self.skill_rating[10:35]
-            #if rating is 2 digits
-            elif (len(self.skill_rating) == 41):
-                self.skill_rating = self.skill_rating[32:34]
-            #if rating is (ever) 3 digits
-            elif (len(self.skill_rating) == 42):
-                self.skill_rating = self.skill_rating[32:35]
         except AttributeError as e:
             self.skill_rating = 'Skill Rating not found'
 
