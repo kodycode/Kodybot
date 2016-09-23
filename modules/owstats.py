@@ -222,15 +222,15 @@ class OWStats:
 
     @display_time_played.command(name='', hidden=True)
     async def get_time_played(self):
-
         table = self.soup.find_all('table', {'class': 'data-table'})
         td = table[6].find_all('td')
 
         #Checks if profile is still using score metrics
         if (len(td) == 12):
+            #shouldn't(?) work anymore
             self.time_played = td[11].text
         else:
-            self.time_played = td[9].text
+            self.time_played = td[7].text
 
     @ow.group(name='rtime', pass_context=True)
     async def display_ranked_time_played(self, ctx, battle_tag : str):
@@ -286,9 +286,10 @@ class OWStats:
 
         #Checks if profile is still using score metrics
         if (len(td) == 12):
+            #shouldn't(?) work anymore
             time_played1 = td[11].text.replace(' hours', '')
         else:
-            time_played1 = td[9].text.replace(' hours', '')
+            time_played1 = td[7].text.replace(' hours', '')
 
         ### Competitive Play Time
         for competitive in self.soup.find('div', {'id': 'competitive-play'}):
