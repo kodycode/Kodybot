@@ -10,7 +10,7 @@ options = []
 options.append('--load-images=false')
 
 class LOLFantasy:
-    
+
     def __init__(self, bot):
         self.bot = bot
         self.html_source = ''
@@ -23,12 +23,12 @@ class LOLFantasy:
         self.losses = []
         self.fantasy_ID = ''
 
-    @commands.group(pass_context=True)
+    @commands.group(pass_context=True, description='Displays Fantasy LCS commands.')
     async def fantasy(self, ctx):
         if (ctx.invoked_subcommand is None):
             await self.bot.say('Incorrect subcommand passed.')
 
-    @fantasy.group(name='teams', pass_context=True)
+    @fantasy.group(name='teams', pass_context=True, description='Displays Fantasy LCS team names.')
     async def display_team_names(self, ctx, ID : str):
         self.fantasy_ID = ID
         self.driver = webdriver.PhantomJS(executable_path=config.directory, service_args=options)
@@ -37,13 +37,13 @@ class LOLFantasy:
         self.html_source = self.driver.page_source
         self.soup = BeautifulSoup(self.html_source, 'html.parser')
         self.driver.quit()
-            
+
         await ctx.invoke(self.get_team_names)
         if not self.team_names:
             await self.bot.say('No teams found for Fantasy ID: ' + self.fantasy_ID)
         else:
             await self.bot.say('For Fantasy ID: ' + self.fantasy_ID + '\n' + '\n'.join(map(str,self.team_names)))
-        
+
     @display_team_names.command(name='', hidden=True)
     async def get_team_names(self):
         team_names = []
@@ -52,8 +52,8 @@ class LOLFantasy:
                 team_names.append(team.text)
 
         self.team_names = team_names
-                
-    @fantasy.group(name='summoners', pass_context=True)
+
+    @fantasy.group(name='summoners', pass_context=True, description='Displays summoner names associated in the Fantasy LCS league.')
     async def display_summoner_names(self, ctx, ID : str):
         self.fantasy_ID = ID
         self.driver = webdriver.PhantomJS(executable_path=config.directory, service_args=options)
@@ -62,7 +62,7 @@ class LOLFantasy:
         self.html_source = self.driver.page_source
         self.soup = BeautifulSoup(self.html_source, 'html.parser')
         self.driver.quit()
-            
+
         await ctx.invoke(self.get_summoner_names)
         if not self.summoner_names:
             await self.bot.say('No players found for Fantasy ID: ' + self.fantasy_ID)
@@ -72,11 +72,11 @@ class LOLFantasy:
     @display_summoner_names.command(name='', hidden=True)
     async def get_summoner_names(self):
         summoner_names = []
-            
+
         for head in self.soup.find_all('div', {'class': 'standings-list'}):
             for summoner in head.find_all('div', {'class': 'summoner-name'}):
                  summoner_names.append(summoner.text)
-                 
+
         self.summoner_names = summoner_names
 
     @fantasy.command(name='', hidden=True)
@@ -115,19 +115,19 @@ class LOLFantasy:
             num = ''
             for whole in head.find('span', {'class': 'whole-part'}):
                 whole_numbers.append(whole)
-            
+
             for fraction in head.find('span', {'class': 'fraction-part'}):
                 fraction_numbers.append(fraction)
         for w, f in zip(whole_numbers, fraction_numbers):
             total_points.append(w+f)
-            
+
         self.total_points = total_points
 
     @fantasy.command(name='', hidden=True)
     async def get_header(self):
         self.header = self.soup.title.string
 
-    @fantasy.command(name='league', pass_context=True)
+    @fantasy.command(name='league', pass_context=True, description='Displays information related to the Fantasy LCS league.')
     async def display_league(self, ctx, ID : str):
         self.fantasy_ID = ID
         self.driver = webdriver.PhantomJS(executable_path=config.directory, service_args=options)
@@ -137,7 +137,7 @@ class LOLFantasy:
         self.soup = BeautifulSoup(self.html_source, 'html.parser')
         self.driver.quit()
 
-        await ctx.invoke(self.get_header)            
+        await ctx.invoke(self.get_header)
         await ctx.invoke(self.get_team_names)
         await ctx.invoke(self.get_summoner_names)
         await ctx.invoke(self.get_wins)
@@ -171,8 +171,7 @@ class LOLFantasy:
                 display.append('  \t\t\t\t\t\t\t' + str(p) + '\n')
                 rank += 1
 
-            await self.bot.say('\n'.join(map(str,display)))    
+            await self.bot.say('\n'.join(map(str,display)))
 
 def setup(bot):
     bot.add_cog(LOLFantasy(bot))
-

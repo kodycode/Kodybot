@@ -26,12 +26,12 @@ class OWStats:
         self.ranked_top_hours = []
         self.html_source = ''
 
-    @commands.group(pass_context = True)
+    @commands.group(pass_context = True, description='List of Overwatch commands. Currently only searches for PC players.')
     async def ow(self, ctx):
         if (ctx.invoked_subcommand is None):
             await self.bot.say('Incorrect random subcommand passed.')
 
-    @ow.group(name='skill', pass_context=True)
+    @ow.group(name='skill', pass_context=True, description='Displays skill rating.')
     async def display_skill_rating(self, ctx, battle_tag : str):
         self.battle_tag = battle_tag.replace('#','-')
         self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
@@ -60,7 +60,7 @@ class OWStats:
         except AttributeError as e:
             self.skill_rating = 'Skill Rating not found'
 
-    @ow.group(name='rank', pass_context=True)
+    @ow.group(name='rank', pass_context=True, description='Displays rank based on skill rating.')
     async def display_rank(self, ctx, battle_tag : str):
         self.battle_tag = battle_tag.replace('#','-')
         self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
@@ -101,7 +101,7 @@ class OWStats:
         else:
             self.rank = 'Top 500'
 
-    @ow.group(name='wins', pass_context=True)
+    @ow.group(name='wins', pass_context=True, description='Displays number of wins.')
     async def display_wins(self, ctx, battle_tag : str):
         self.battle_tag = battle_tag.replace('#','-')
         self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
@@ -123,7 +123,7 @@ class OWStats:
 
         self.wins = td[1].text.replace(',','')
 
-    @ow.group(name='twins', pass_context=True)
+    @ow.group(name='twins', pass_context=True, description='Displays total amount of wins.')
     async def display_total_wins(self, ctx, battle_tag : str):
         self.battle_tag = battle_tag.replace('#', '-')
         self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
@@ -147,7 +147,7 @@ class OWStats:
         except AttributeError as e:
             self.skill_rating = 'Total wins not found.'
 
-    @ow.group(name='rwins', pass_context=True)
+    @ow.group(name='rwins', pass_context=True, description='Displays competitive wins.')
     async def display_ranked_wins(self, ctx, battle_tag : str):
         self.battle_tag = battle_tag.replace('#','-')
         self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
@@ -171,7 +171,7 @@ class OWStats:
 
         self.ranked_wins = td[3].text.replace(',','')
 
-    @ow.group(name='rlosses', pass_context=True)
+    @ow.group(name='rlosses', pass_context=True, description='Displays competitive losses.')
     async def display_ranked_losses(self, ctx, battle_tag : str):
         self.battle_tag = battle_tag.replace('#','-')
         self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
@@ -197,7 +197,7 @@ class OWStats:
         self.ranked_losses = int(td[1].text.replace(',','')) - int(td[3].text.replace(',',''))
         self.ranked_losses = str(self.ranked_losses)
 
-    @ow.group(name='rpercentage', pass_context=True)
+    @ow.group(name='rpercentage', pass_context=True, description='Displays competitive win percentage.')
     async def display_ranked_win_percentage(self, ctx, battle_tag : str):
         self.battle_tag = battle_tag.replace('#','-')
         self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
@@ -224,7 +224,7 @@ class OWStats:
 
         self.ranked_win_percentage = (wins/total_games) * 100
 
-    @ow.group(name='time', pass_context=True)
+    @ow.group(name='time', pass_context=True, description='Displays time played in quick play.')
     async def display_time_played(self, ctx, battle_tag : str):
         self.battle_tag = battle_tag.replace('#','-')
         self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
@@ -251,7 +251,7 @@ class OWStats:
         else:
             self.time_played = td[7].text
 
-    @ow.group(name='rtime', pass_context=True)
+    @ow.group(name='rtime', pass_context=True, description='Displays time played in competitive play.')
     async def display_ranked_time_played(self, ctx, battle_tag : str):
         self.battle_tag = battle_tag.replace('#','-')
         self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
@@ -280,7 +280,7 @@ class OWStats:
         else:
             self.ranked_time_played = td[9].text
 
-    @ow.group(name='ttime', pass_context=True)
+    @ow.group(name='ttime', pass_context=True, description='Displays total time played overall.')
     async def display_total_time_played(self, ctx, battle_tag : str):
         self.battle_tag = battle_tag.replace('#','-')
         self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
@@ -324,7 +324,7 @@ class OWStats:
 
         self.total_time_played = str(int(time_played1) + int(time_played2))
 
-    @ow.group(name='level', pass_context=True)
+    @ow.group(name='level', pass_context=True, description='Displays current level of player.')
     async def display_level(self, ctx, battle_tag : str):
         self.battle_tag = battle_tag.replace('#','-')
         self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
@@ -348,7 +348,7 @@ class OWStats:
 
         self.current_level = str(current_level.text)
 
-    @ow.group(name='topfive', pass_context=True)
+    @ow.group(name='topfive', pass_context=True, description='Displays top five heroes in quick play.')
     async def display_top_five_heroes(self, ctx, battle_tag : str):
         self.battle_tag = battle_tag.replace('#','-')
         self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
@@ -400,7 +400,7 @@ class OWStats:
             count = count+1
         self.top_hours = top_hours
 
-    @ow.group(name='rtopfive', pass_context=True)
+    @ow.group(name='rtopfive', pass_context=True, description='Displays top five heroes in competitive play.')
     async def display_ranked_top_five_heroes(self, ctx, battle_tag : str):
         self.battle_tag = battle_tag.replace('#','-')
         self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
@@ -449,7 +449,7 @@ class OWStats:
 
                 count = count+1
 
-    @ow.command(name='quick', pass_context=True)
+    @ow.command(name='quick', pass_context=True, description='Displays all information related to quick play.')
     async def display_quick_info(self, ctx, battle_tag : str):
         self.battle_tag = battle_tag.replace('#','-')
         self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
@@ -477,7 +477,7 @@ class OWStats:
             await self.bot.say('Error in finding data from battle tag ' + self.battle_tag
                              + '. Did you enter the correct battle tag?')
 
-    @ow.command(name='competitive', pass_context=True)
+    @ow.command(name='competitive', pass_context=True, description='Displays all information related to competitive play.')
     async def display_ranked_info(self, ctx, battle_tag : str):
         self.battle_tag = battle_tag.replace('#','-')
         self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag

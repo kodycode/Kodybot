@@ -14,7 +14,7 @@ initial_extensions = [
 if (config.enable_fantasy == True):
     initial_extensions.append('modules.lolfantasy')
 
-bot = commands.Bot(command_prefix='$', description='')
+bot = commands.Bot(command_prefix='$', description='Displays web-scraped data.')
 
 @bot.async_event
 async def on_ready():
@@ -23,7 +23,7 @@ async def on_ready():
             bot.load_extension(extension)
         except Exception as e:
             print('Failed to load extension {}\n{}: {}'.format(extension, type(e).__name__, e))
-            
+
     print('Logging in..')
     print('Successfully logged in!')
 
