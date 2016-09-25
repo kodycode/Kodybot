@@ -9,7 +9,7 @@ class OWStats:
         self.bot = bot
         self.battle_tag = ''
         self.skill_rating = 0
-        self.level = 0
+        self.current_level = 0
         self.wins = 0
         self.total_wins = 0
         self.ranked_wins = 0
@@ -179,7 +179,7 @@ class OWStats:
 
         wins = int(td[3].text.replace(',',''))
         total_games = int(td[1].text.replace(',',''))
-        
+
         self.ranked_win_percentage = (wins/total_games) * 100
 
     @ow.group(name='time', pass_context=True)
@@ -292,42 +292,19 @@ class OWStats:
             self.soup = BeautifulSoup(self.html_source, 'html.parser')
 
             await ctx.invoke(self.get_level)
-            if (self.level == 0):
+            if (self.current_level == 0):
                 await self.bot.say('Level not found for ' + self.battle_tag)
             else:
-                await self.bot.say(self.battle_tag + ' is level ' + self.level)
+                await self.bot.say(self.battle_tag + ' is level ' + self.current_level)
         except urllib.error.HTTPError as e:
             await self.bot.say('Error in finding data from battle tag ' + self.battle_tag
                              + '. Did you enter the correct battle tag?')
 
     @display_level.command(name='', hidden=True)
     async def get_level(self):
+        current_level = self.soup.find('div', {'class': 'u-vertical-center'})
 
-        level = self.soup.find('div', {'class': 'u-vertical-center'})
-
-        prestige1 = self.soup.find('div', {'style': 'background-image:url(https://' +
-                                     'blzgdapipro-a.akamaihd.net/game/playerlevelrewards/0x025000000000092B_Rank.png)'})
-        prestige2 = self.soup.find('div', {'style': 'background-image:url(https://' +
-                                      'blzgdapipro-a.akamaihd.net/game/playerlevelrewards/0x0250000000000951_Rank.png)'})
-        prestige3 = self.soup.find('div', {'style': 'background-image:url(https://' +
-                                      'blzgdapipro-a.akamaihd.net/game/playerlevelrewards/0x0250000000000952_Rank.png)'})
-        prestige4 = self.soup.find('div', {'style': 'background-image:url(https://' +
-                                      'blzgdapipro-a.akamaihd.net/game/playerlevelrewards/0x0250000000000953_Rank.png)'})
-        prestige5 = self.soup.find('div', {'style': 'background-image:url(https://' +
-                                      'blzgdapipro-a.akamaihd.net/game/playerlevelrewards/0x0250000000000954_Rank.png)'})
-
-        if (prestige1):
-            self.level = str(int(level.text) + int(100))
-        elif (prestige2):
-            self.level = str(int(level.text) + int(200))
-        elif (prestige3):
-            self.level = str(int(level.text) + int(300))
-        elif (prestige4):
-            self.level = str(int(level.text) + int(400))
-        elif (prestige5):
-            self.level = str(int(level.text) + int(500))
-        else:
-            self.level = str(level.text)
+        self.current_level = str(current_level.text)
 
     @ow.group(name='topfive', pass_context=True)
     async def display_top_five_heroes(self, ctx, battle_tag : str):
@@ -448,7 +425,7 @@ class OWStats:
             display = []
             display.append(self.battle_tag)
             display.append('-----------------------')
-            display.append('**Level:** ' + self.level)
+            display.append('**Current Level:** ' + self.current_level)
             display.append('**Total Wins:** ' + self.total_wins)
             display.append('**Quick Wins:** ' + self.wins)
             display.append('**Total Time Played:** ' + self.total_time_played + ' hours')
@@ -480,7 +457,7 @@ class OWStats:
             display.append(self.battle_tag)
             display.append('-----------------------')
             display.append('**Skill Rating:** ' + self.skill_rating)
-            display.append('**Level:** ' + self.level)
+            display.append('**Current Level:** ' + self.current_level)
             display.append('**Total Wins:** ' + self.total_wins)
             display.append('**Competitive Wins:** ' + self.ranked_wins)
             display.append('**Competitive: Losses:** ' + self.ranked_losses)
