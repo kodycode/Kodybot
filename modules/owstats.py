@@ -11,6 +11,7 @@ class OWStats:
         self.skill_rating = 0
         self.level = 0
         self.wins = 0
+        self.total_wins = 0
         self.ranked_wins = 0
         self.losses = 0
         self.ranked_losses = 0
@@ -80,6 +81,30 @@ class OWStats:
 
         self.wins = td[1].text.replace(',','')
 
+    @ow.group(name='twins', pass_context=True)
+    async def display_total_wins(self, ctx, battle_tag : str):
+        self.battle_tag = battle_tag.replace('#', '-')
+        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
+        self.battle_tag = self.battle_tag.replace('-','#')
+        try:
+            self.html_source = urllib.request.urlopen(self.URL)
+            self.soup = BeautifulSoup(self.html_source, 'html.parser')
+
+            await ctx.invoke(self.get_total_wins)
+            await self.bot.say(self.battle_tag + ' has won a total of ' + self.total_wins + ' games.')
+        except urllib.error.HTTPError as e:
+            await self.bot.say('Error in finding data from battle tag ' + self.battle_tag
+                             + '. Did you enter the correct battle tag?')
+
+    @display_total_wins.command(name='', hidden=True)
+    async def get_total_wins(self):
+        try:
+            head = self.soup.find('p', {'class': 'masthead-detail h4'})
+            self.total_wins = str(head.text).split()[0]
+
+        except AttributeError as e:
+            self.skill_rating = 'Total wins not found.'
+
     @ow.group(name='rwins', pass_context=True)
     async def display_ranked_wins(self, ctx, battle_tag : str):
         self.battle_tag = battle_tag.replace('#','-')
@@ -102,30 +127,7 @@ class OWStats:
 
         td = table[6].find_all('td')
 
-        self.ranked_wins = td[1].text.replace(',','')
-
-    @ow.group(name='losses', pass_context=True)
-    async def display_losses(self, ctx, battle_tag : str):
-        self.battle_tag = battle_tag.replace('#','-')
-        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
-        self.battle_tag = self.battle_tag.replace('-','#')
-        try:
-            self.html_source = urllib.request.urlopen(self.URL)
-            self.soup = BeautifulSoup(self.html_source, 'html.parser')
-
-            await ctx.invoke(self.get_losses)
-            await self.bot.say(self.battle_tag + ' has lost ' + self.losses + ' games')
-        except urllib.error.HTTPError as e:
-            await self.bot.say('Error in finding data from battle tag ' + self.battle_tag
-                             + '. Did you enter the correct battle tag?')
-
-    @display_losses.command(name='', hidden=True)
-    async def get_losses(self):
-        table = self.soup.find_all('table', {'class': 'data-table'})
-        td = table[6].find_all('td')
-
-        self.losses = int(td[3].text.replace(',','')) - int(td[1].text.replace(',',''))
-        self.losses = str(self.losses)
+        self.ranked_wins = td[3].text.replace(',','')
 
     @ow.group(name='rlosses', pass_context=True)
     async def display_ranked_losses(self, ctx, battle_tag : str):
@@ -153,31 +155,6 @@ class OWStats:
         self.ranked_losses = int(td[1].text.replace(',','')) - int(td[3].text.replace(',',''))
         self.ranked_losses = str(self.ranked_losses)
 
-    @ow.group(name='percentage', pass_context=True)
-    async def display_win_percentage(self, ctx, battle_tag : str):
-        self.battle_tag = battle_tag.replace('#','-')
-        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
-        self.battle_tag = self.battle_tag.replace('-','#')
-        try:
-            self.html_source = urllib.request.urlopen(self.URL)
-            self.soup = BeautifulSoup(self.html_source, 'html.parser')
-
-            await ctx.invoke(self.get_win_percentage)
-            await self.bot.say(self.battle_tag + "'s win percentage is %.2f" % self.win_percentage + '%')
-        except urllib.error.HTTPError as e:
-            await self.bot.say('Error in finding data from battle tag ' + self.battle_tag
-                             + '. Did you enter the correct battle tag?')
-
-    @display_win_percentage.command(name='', hidden=True)
-    async def get_win_percentage(self):
-        table = self.soup.find_all('table', {'class': 'data-table'})
-        td = table[6].find_all('td')
-
-        wins = int(td[1].text.replace(',',''))
-        total_games = int(td[3].text.replace(',',''))
-
-        self.win_percentage = (wins/total_games) * 100
-
     @ow.group(name='rpercentage', pass_context=True)
     async def display_ranked_win_percentage(self, ctx, battle_tag : str):
         self.battle_tag = battle_tag.replace('#','-')
@@ -200,9 +177,10 @@ class OWStats:
 
         td = table[6].find_all('td')
 
-        wins = int(td[1].text.replace(',',''))
-        total_games = int(td[3].text.replace(',',''))
-
+        wins = int(td[3].text.replace(',',''))
+        total_games = int(td[1].text.replace(',',''))
+        print(wins)
+        print(total_games)
         self.ranked_win_percentage = (wins/total_games) * 100
 
     @ow.group(name='time', pass_context=True)
@@ -464,20 +442,18 @@ class OWStats:
 
             await ctx.invoke(self.get_level)
             await ctx.invoke(self.get_wins)
-            await ctx.invoke(self.get_losses)
-            await ctx.invoke(self.get_win_percentage)
+            await ctx.invoke(self.get_total_wins)
             await ctx.invoke(self.get_time_played)
             await ctx.invoke(self.get_total_time_played)
 
             display = []
             display.append(self.battle_tag)
             display.append('-----------------------')
-            display.append('Level: ' + self.level)
-            display.append('Wins: ' + self.wins)
-            display.append('Losses: ' + self.losses)
-            display.append('Win Percentage: %.2f%%' % self.win_percentage)
-            display.append('Time Played: ' + self.time_played)
-            display.append('Total Time Played: ' + self.total_time_played + ' hours')
+            display.append('**Level:** ' + self.level)
+            display.append('**Total Wins:** ' + self.total_wins)
+            display.append('**Quick Wins:** ' + self.wins)
+            display.append('**Total Time Played:** ' + self.total_time_played + ' hours')
+            display.append('**Quick Time Played:** ' + self.time_played)
             await self.bot.say('\n'.join(map(str,display)))
         except urllib.error.HTTPError as e:
             await self.bot.say('Error in finding data from battle tag ' + self.battle_tag
@@ -495,6 +471,7 @@ class OWStats:
             await ctx.invoke(self.get_skill_rating)
             await ctx.invoke(self.get_level)
             await ctx.invoke(self.get_ranked_wins)
+            await ctx.invoke(self.get_total_wins)
             await ctx.invoke(self.get_ranked_losses)
             await ctx.invoke(self.get_ranked_win_percentage)
             await ctx.invoke(self.get_ranked_time_played)
@@ -503,13 +480,14 @@ class OWStats:
             display = []
             display.append(self.battle_tag)
             display.append('-----------------------')
-            display.append('Skill Rating: ' + self.skill_rating)
-            display.append('Level: ' + self.level)
-            display.append('Wins: ' + self.ranked_wins)
-            display.append('Losses: ' + self.ranked_losses)
-            display.append('Win Percentage: %.2f%%' % self.ranked_win_percentage)
-            display.append('Time Played: ' + self.ranked_time_played)
-            display.append('Total Time Played: ' + self.total_time_played + ' hours')
+            display.append('**Skill Rating:** ' + self.skill_rating)
+            display.append('**Level:** ' + self.level)
+            display.append('**Total Wins:** ' + self.total_wins)
+            display.append('**Competitive Wins:** ' + self.ranked_wins)
+            display.append('**Competitive: Losses:** ' + self.ranked_losses)
+            display.append('**Win Percentage:** %.2f%%' % self.ranked_win_percentage)
+            display.append('**Total Time Played:** ' + self.total_time_played + ' hours')
+            display.append('**Competitive Time Played:** ' + self.ranked_time_played)
             await self.bot.say('\n'.join(map(str,display)))
         except urllib.error.HTTPError as e:
             await self.bot.say('Error in finding data from battle tag ' + self.battle_tag
