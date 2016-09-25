@@ -150,7 +150,7 @@ class OWStats:
 
         td = table[6].find_all('td')
 
-        self.ranked_losses = int(td[3].text.replace(',','')) - int(td[1].text.replace(',',''))
+        self.ranked_losses = int(td[1].text.replace(',','')) - int(td[3].text.replace(',',''))
         self.ranked_losses = str(self.ranked_losses)
 
     @ow.group(name='percentage', pass_context=True)
