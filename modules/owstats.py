@@ -179,8 +179,7 @@ class OWStats:
 
         wins = int(td[3].text.replace(',',''))
         total_games = int(td[1].text.replace(',',''))
-        print(wins)
-        print(total_games)
+        
         self.ranked_win_percentage = (wins/total_games) * 100
 
     @ow.group(name='time', pass_context=True)
