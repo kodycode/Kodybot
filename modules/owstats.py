@@ -9,6 +9,7 @@ class OWStats:
         self.bot = bot
         self.battle_tag = ''
         self.skill_rating = 0
+        self.rank = ''
         self.current_level = 0
         self.wins = 0
         self.total_wins = 0
@@ -44,7 +45,7 @@ class OWStats:
             if (self.skill_rating == 0):
                 await self.bot.say('No Skill Rating found for this player')
             else:
-                await self.bot.say(self.battle_tag + ' has a skill rating of ' + self.skill_rating)
+                await self.bot.say(self.battle_tag + ' has a skill rating of ' + str(self.skill_rating))
         except urllib.error.HTTPError as e:
             await self.bot.say('Error in finding data from battle tag ' + self.battle_tag
                              + '. Did you enter the correct battle tag?')
@@ -52,12 +53,53 @@ class OWStats:
     @display_skill_rating.command(name='', hidden=True)
     async def get_skill_rating(self):
         try:
-            rank = self.soup.find('div', {'class': 'competitive-rank'})
-            rating = rank.find('div', {'class': 'u-align-center h6'})
-            self.skill_rating = str(rating.text)
+            skill = self.soup.find('div', {'class': 'competitive-rank'})
+            rating = skill.find('div', {'class': 'u-align-center h6'})
+            self.skill_rating = int(rating.text)
 
         except AttributeError as e:
             self.skill_rating = 'Skill Rating not found'
+
+    @ow.group(name='rank', pass_context=True)
+    async def display_rank(self, ctx, battle_tag : str):
+        self.battle_tag = battle_tag.replace('#','-')
+        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
+        self.battle_tag = self.battle_tag.replace('-','#')
+        try:
+            self.html_source = urllib.request.urlopen(self.URL)
+            self.soup = BeautifulSoup(self.html_source, 'html.parser')
+
+            await ctx.invoke(self.get_skill_rating)
+
+            if (self.skill_rating == 0):
+                await self.bot.say('No Rank found for this player')
+            else:
+                await ctx.invoke(self.get_rank)
+                await self.bot.say(self.battle_tag + ' is ' + self.rank + ' rank. ')
+        except urllib.error.HTTPError as e:
+            await self.bot.say('Error in finding data from battle tag ' + self.battle_tag
+                             + '. Did you enter the correct battle tag?')
+
+    @display_rank.command(name='', hidden=True)
+    async def get_rank(self):
+        #Assumes there is a valid skill rating
+
+        if ((1 <= self.skill_rating) and (self.skill_rating <= 1499)):
+            self.rank = 'Bronze'
+        elif ((1500 >= self.skill_rating) and (self.skill_rating <= 1999)):
+            self.rank = 'Silver'
+        elif ((2000 >= self.skill_rating) and (self.skill_rating <= 2499)):
+            self.rank = 'Gold'
+        elif ((2500 >= self.skill_rating) and (self.skill_rating <= 2999)):
+            self.rank = 'Platinum'
+        elif ((3000 >= self.skill_rating) and (self.skill_rating <= 3499)):
+            self.rank = 'Diamond'
+        elif ((3500 >= self.skill_rating) and (self.skill_rating <= 3999)):
+            self.rank = 'Master'
+        elif ((4000 >= self.skill_rating) and (self.skill_rating <= 5000)):
+            self.rank = 'Grandmaster'
+        else:
+            self.rank = 'Top 500'
 
     @ow.group(name='wins', pass_context=True)
     async def display_wins(self, ctx, battle_tag : str):
@@ -445,6 +487,7 @@ class OWStats:
             self.soup = BeautifulSoup(self.html_source, 'html.parser')
 
             await ctx.invoke(self.get_skill_rating)
+            await ctx.invoke(self.get_rank)
             await ctx.invoke(self.get_level)
             await ctx.invoke(self.get_ranked_wins)
             await ctx.invoke(self.get_total_wins)
@@ -456,7 +499,8 @@ class OWStats:
             display = []
             display.append(self.battle_tag)
             display.append('-----------------------')
-            display.append('**Skill Rating:** ' + self.skill_rating)
+            display.append('**Skill Rating:** ' + str(self.skill_rating))
+            display.append('**Rank:** ' + self.rank)
             display.append('**Current Level:** ' + self.current_level)
             display.append('**Total Wins:** ' + self.total_wins)
             display.append('**Competitive Wins:** ' + self.ranked_wins)
