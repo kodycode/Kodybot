@@ -25,6 +25,12 @@ class OWStats:
         self.top_hours = []
         self.ranked_top_hours = []
         self.html_source = ''
+        self.URL = ''
+
+    async def get_URL(self, battle_tag):
+        self.battle_tag = battle_tag.replace('#','-')
+        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
+        self.battle_tag = self.battle_tag.replace('-','#')
 
     @commands.group(pass_context = True, description='List of Overwatch commands. Currently only searches for PC players.')
     async def ow(self, ctx):
@@ -33,9 +39,9 @@ class OWStats:
 
     @ow.group(name='skill', pass_context=True, description='Displays skill rating.')
     async def display_skill_rating(self, ctx, battle_tag : str):
-        self.battle_tag = battle_tag.replace('#','-')
-        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
-        self.battle_tag = self.battle_tag.replace('-','#')
+
+        await self.get_URL(battle_tag)
+
         try:
             self.html_source = urllib.request.urlopen(self.URL)
             self.soup = BeautifulSoup(self.html_source, 'html.parser')
@@ -62,9 +68,9 @@ class OWStats:
 
     @ow.group(name='rank', pass_context=True, description='Displays rank based on skill rating.')
     async def display_rank(self, ctx, battle_tag : str):
-        self.battle_tag = battle_tag.replace('#','-')
-        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
-        self.battle_tag = self.battle_tag.replace('-','#')
+
+        await self.get_URL(battle_tag)
+
         try:
             self.html_source = urllib.request.urlopen(self.URL)
             self.soup = BeautifulSoup(self.html_source, 'html.parser')
@@ -103,9 +109,9 @@ class OWStats:
 
     @ow.group(name='wins', pass_context=True, description='Displays number of wins.')
     async def display_wins(self, ctx, battle_tag : str):
-        self.battle_tag = battle_tag.replace('#','-')
-        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
-        self.battle_tag = self.battle_tag.replace('-','#')
+
+        await self.get_URL(battle_tag)
+
         try:
             self.html_source = urllib.request.urlopen(self.URL)
             self.soup = BeautifulSoup(self.html_source, 'html.parser')
@@ -125,9 +131,9 @@ class OWStats:
 
     @ow.group(name='twins', pass_context=True, description='Displays total amount of wins.')
     async def display_total_wins(self, ctx, battle_tag : str):
-        self.battle_tag = battle_tag.replace('#', '-')
-        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
-        self.battle_tag = self.battle_tag.replace('-','#')
+
+        await self.get_URL(battle_tag)
+
         try:
             self.html_source = urllib.request.urlopen(self.URL)
             self.soup = BeautifulSoup(self.html_source, 'html.parser')
@@ -149,9 +155,9 @@ class OWStats:
 
     @ow.group(name='rwins', pass_context=True, description='Displays competitive wins.')
     async def display_ranked_wins(self, ctx, battle_tag : str):
-        self.battle_tag = battle_tag.replace('#','-')
-        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
-        self.battle_tag = self.battle_tag.replace('-','#')
+
+        await self.get_URL(battle_tag)
+
         try:
             self.html_source = urllib.request.urlopen(self.URL)
             self.soup = BeautifulSoup(self.html_source, 'html.parser')
@@ -173,9 +179,9 @@ class OWStats:
 
     @ow.group(name='rlosses', pass_context=True, description='Displays competitive losses.')
     async def display_ranked_losses(self, ctx, battle_tag : str):
-        self.battle_tag = battle_tag.replace('#','-')
-        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
-        self.battle_tag = self.battle_tag.replace('-','#')
+
+        await self.get_URL(battle_tag)
+
         try:
             self.html_source = urllib.request.urlopen(self.URL)
             self.soup = BeautifulSoup(self.html_source, 'html.parser')
@@ -188,7 +194,6 @@ class OWStats:
 
     @display_ranked_losses.command(name='', hidden=True)
     async def get_ranked_losses(self):
-
         for competitive in self.soup.find('div', {'id': 'competitive-play'}):
             table = competitive.find_all('table', {'class': 'data-table'})
 
@@ -199,9 +204,9 @@ class OWStats:
 
     @ow.group(name='rpercentage', pass_context=True, description='Displays competitive win percentage.')
     async def display_ranked_win_percentage(self, ctx, battle_tag : str):
-        self.battle_tag = battle_tag.replace('#','-')
-        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
-        self.battle_tag = self.battle_tag.replace('-','#')
+
+        await self.get_URL(battle_tag)
+
         try:
             self.html_source = urllib.request.urlopen(self.URL)
             self.soup = BeautifulSoup(self.html_source, 'html.parser')
@@ -226,9 +231,9 @@ class OWStats:
 
     @ow.group(name='time', pass_context=True, description='Displays time played in quick play.')
     async def display_time_played(self, ctx, battle_tag : str):
-        self.battle_tag = battle_tag.replace('#','-')
-        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
-        self.battle_tag = self.battle_tag.replace('-','#')
+
+        await self.get_URL(battle_tag)
+
         try:
             self.html_source = urllib.request.urlopen(self.URL)
             self.soup = BeautifulSoup(self.html_source, 'html.parser')
@@ -253,9 +258,9 @@ class OWStats:
 
     @ow.group(name='rtime', pass_context=True, description='Displays time played in competitive play.')
     async def display_ranked_time_played(self, ctx, battle_tag : str):
-        self.battle_tag = battle_tag.replace('#','-')
-        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
-        self.battle_tag = self.battle_tag.replace('-','#')
+
+        await self.get_URL(battle_tag)
+
         try:
             self.html_source = urllib.request.urlopen(self.URL)
             self.soup = BeautifulSoup(self.html_source, 'html.parser')
@@ -282,9 +287,9 @@ class OWStats:
 
     @ow.group(name='ttime', pass_context=True, description='Displays total time played overall.')
     async def display_total_time_played(self, ctx, battle_tag : str):
-        self.battle_tag = battle_tag.replace('#','-')
-        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
-        self.battle_tag = self.battle_tag.replace('-','#')
+
+        await self.get_URL(battle_tag)
+
         try:
             self.html_source = urllib.request.urlopen(self.URL)
             self.soup = BeautifulSoup(self.html_source, 'html.parser')
@@ -326,9 +331,9 @@ class OWStats:
 
     @ow.group(name='level', pass_context=True, description='Displays current level of player.')
     async def display_level(self, ctx, battle_tag : str):
-        self.battle_tag = battle_tag.replace('#','-')
-        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
-        self.battle_tag = self.battle_tag.replace('-','#')
+
+        await self.get_URL(battle_tag)
+
         try:
             self.html_source = urllib.request.urlopen(self.URL)
             self.soup = BeautifulSoup(self.html_source, 'html.parser')
@@ -350,9 +355,9 @@ class OWStats:
 
     @ow.group(name='topfive', pass_context=True, description='Displays top five heroes in quick play.')
     async def display_top_five_heroes(self, ctx, battle_tag : str):
-        self.battle_tag = battle_tag.replace('#','-')
-        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
-        self.battle_tag = self.battle_tag.replace('-','#')
+
+        await self.get_URL(battle_tag)
+
         try:
             self.html_source = urllib.request.urlopen(self.URL)
             self.soup = BeautifulSoup(self.html_source, 'html.parser')
@@ -402,9 +407,9 @@ class OWStats:
 
     @ow.group(name='rtopfive', pass_context=True, description='Displays top five heroes in competitive play.')
     async def display_ranked_top_five_heroes(self, ctx, battle_tag : str):
-        self.battle_tag = battle_tag.replace('#','-')
-        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
-        self.battle_tag = self.battle_tag.replace('-','#')
+
+        await self.get_URL(battle_tag)
+
         try:
             self.html_source = urllib.request.urlopen(self.URL)
             self.soup = BeautifulSoup(self.html_source, 'html.parser')
@@ -451,9 +456,9 @@ class OWStats:
 
     @ow.command(name='quick', pass_context=True, description='Displays all information related to quick play.')
     async def display_quick_info(self, ctx, battle_tag : str):
-        self.battle_tag = battle_tag.replace('#','-')
-        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
-        self.battle_tag = self.battle_tag.replace('-','#')
+
+        await self.get_URL(battle_tag)
+
         try:
             self.html_source = urllib.request.urlopen(self.URL)
             self.soup = BeautifulSoup(self.html_source, 'html.parser')
@@ -479,9 +484,9 @@ class OWStats:
 
     @ow.command(name='competitive', pass_context=True, description='Displays all information related to competitive play.')
     async def display_ranked_info(self, ctx, battle_tag : str):
-        self.battle_tag = battle_tag.replace('#','-')
-        self.URL = 'https://playoverwatch.com/en-us/career/pc/us/' + self.battle_tag
-        self.battle_tag = self.battle_tag.replace('-','#')
+
+        await self.get_URL(battle_tag)
+
         try:
             self.html_source = urllib.request.urlopen(self.URL)
             self.soup = BeautifulSoup(self.html_source, 'html.parser')
