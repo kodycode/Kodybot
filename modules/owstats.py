@@ -90,21 +90,22 @@ class OWStats:
     async def get_rank(self):
         #Assumes there is a valid skill rating
 
-        if ((1 <= self.skill_rating) and (self.skill_rating <= 1499)):
+        if (self.skill_rating <= 1499):
             self.rank = 'Bronze'
-        elif ((1500 >= self.skill_rating) and (self.skill_rating <= 1999)):
+        elif (self.skill_rating <= 1999):
             self.rank = 'Silver'
-        elif ((2000 >= self.skill_rating) and (self.skill_rating <= 2499)):
+        elif (self.skill_rating <= 2499):
             self.rank = 'Gold'
-        elif ((2500 >= self.skill_rating) and (self.skill_rating <= 2999)):
+        elif (self.skill_rating <= 2999):
             self.rank = 'Platinum'
-        elif ((3000 >= self.skill_rating) and (self.skill_rating <= 3499)):
+        elif (self.skill_rating <= 3499):
             self.rank = 'Diamond'
-        elif ((3500 >= self.skill_rating) and (self.skill_rating <= 3999)):
+        elif (self.skill_rating <= 3999):
             self.rank = 'Master'
-        elif ((4000 >= self.skill_rating) and (self.skill_rating <= 5000)):
+        elif (self.skill_rating <= 5000):
             self.rank = 'Grandmaster'
         else:
+            #Unsure about this statement
             self.rank = 'Top 500'
 
     @ow.group(name='wins', pass_context=True, description='Displays number of wins.')
