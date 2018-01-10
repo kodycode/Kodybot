@@ -1,3 +1,6 @@
+### This project is now deprecated. Certain features may not work anymore.
+
+
 # Kodybot
 A WIP Discord Bot using Python 3.5 along with the API Wrapper written by Rapptz.
 
